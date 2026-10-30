@@ -273,6 +273,25 @@
   .side{transition:opacity .4s}
   body.work .chrome .side{opacity:0;pointer-events:none}
 
+  /* ---------- contact (Figma page 22) ---------- */
+  /* --bg: background black (project pages) → paper as it rises */
+  #contact{min-height:100vh;min-height:100lvh;background:rgb(var(--bg,245,243,239));align-items:center;text-align:center}   /* last page: always fills the screen */
+  .ct{display:flex;flex-direction:column;align-items:center}
+  .ct-logo{display:block;width:clamp(110px,13vw,180px);height:auto;margin-bottom:clamp(22px,4vh,40px)}
+  .ct-logo path{fill:var(--ink)}
+  .ct a{color:var(--ink);text-decoration:none;-webkit-tap-highlight-color:transparent}
+  .ct-handle{font-size:clamp(11px,.95vw,14px);font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+  .ct-qr{display:block;width:min(36vh,62vw,320px);margin:clamp(10px,1.6vh,16px) 0;mix-blend-mode:multiply}   /* the QR's white melts into the paper */
+  .ct-qr img{display:block;width:100%;height:auto}
+  .ct-or{font-size:clamp(11px,.95vw,14px);color:var(--muted)}
+  .ct-mail{font-size:clamp(12px,1.05vw,15px);margin-top:2px}
+  .ct a:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+  @media (hover:hover){
+    .ct-handle:hover,.ct-mail:hover{text-decoration:underline;text-underline-offset:3px}
+    .ct-qr img{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+    .ct-qr:hover img{transform:scale(1.03)}
+  }
+
   /* ---------- iPad portrait & small tablets ---------- */
   @media (max-width:900px){
     .pj-grid{grid-template-columns:repeat(3,1fr)}
@@ -469,7 +488,7 @@
 </section>
 
 <!-- 6–20 — PROJECT PAGES (Figma pages 6–20): one screen holding all the projects side by side, in the grid's order.
-     « » (or swipe / ← →) slide to the previous / next project; past either end goes back to the grid -->
+     « » (or swipe / ← →) slide to the previous / next project; « on the first goes back to the grid, » on the last moves on -->
 <div id="work">
 <div class="pp-track">
 <article class="pp" id="gardens-in-the-sky" style="--sum:2.1499" aria-label="Gardens in the Sky">
@@ -730,10 +749,21 @@
     <p class="pp-desc">Second Home is a 1,450-square-foot tropical brutalist workspace in Ernakulam, Kerala, designed as a fluid, open-plan studio centred around community, collaboration, and a constant relationship with nature. The space embraces a restrained material palette of exposed concrete, high-density fibreboard, and matte steel, balanced by over 100 potted tropical plants that provide natural ventilation, air purification, and acoustic comfort. Key architectural highlights include custom 240 cm ferrocement workstations, a dynamic pegboard atelier wall, and a central discussion zone featuring live furniture prototyping, creating the lived experience of a biophilic sanctuary that feels more like a home than a traditional office.</p>
   </div>
   <button class="pp-arrow prev" data-step="-1" aria-label="Previous project"><svg viewBox="0 0 40 30" aria-hidden="true"><path d="M4 3l12 12L4 27M21 3l12 12-12 12" fill="none" stroke="currentColor" stroke-width="6"/></svg></button>
-  <button class="pp-arrow next" data-step="1" aria-label="Back to all projects"><svg viewBox="0 0 40 30" aria-hidden="true"><path d="M4 3l12 12L4 27M21 3l12 12-12 12" fill="none" stroke="currentColor" stroke-width="6"/></svg></button>
+  <button class="pp-arrow next" data-step="1" aria-label="Next section"><svg viewBox="0 0 40 30" aria-hidden="true"><path d="M4 3l12 12L4 27M21 3l12 12-12 12" fill="none" stroke="currentColor" stroke-width="6"/></svg></button>
 </article>
 </div>
 </div>
+
+<!-- 21 — CONTACT (Figma page 22): logo, Instagram handle + QR (scans to the Instagram profile), email -->
+<section id="contact" class="section" data-label="Contact">
+  <div class="ct">
+    <svg class="ct-logo rv" id="ctLogo" viewBox="98.5 329.92 1604 541" role="img" aria-label="Workers of Art"><path/></svg>
+    <a class="ct-handle rv" href="https://www.instagram.com/workersofartofficial" target="_blank" rel="noopener">@workersofartofficial</a>
+    <a class="ct-qr rv" href="https://www.instagram.com/workersofartofficial" target="_blank" rel="noopener" aria-label="Workers of Art on Instagram"><img src="media/contact/instagram-qr.jpg" alt="QR code for @workersofartofficial on Instagram" width="720" height="720" loading="lazy"></a>
+    <span class="ct-or rv">or</span>
+    <a class="ct-mail rv" href="mailto:office@workersofart.com">office@workersofart.com</a>
+  </div>
+</section>
 
 <!-- fixed chrome shown after the hero -->
 <div class="chrome">
@@ -747,10 +777,11 @@ document.documentElement.classList.add('js');
 const S = [...document.querySelectorAll('#home, .section')];
 const N = S.length;
 const home = S[0], founders = document.getElementById('founders'), awards = document.getElementById('awards'), locate = document.getElementById('locate'), projects = document.getElementById('projects');
-const work = document.getElementById('work');
+const work = document.getElementById('work'), contact = document.getElementById('contact');
 const logo = document.getElementById('logo'), zoomer = document.getElementById('zoomer');
 const stage = home.querySelector('.stage'), zoomSvg = document.getElementById('zoomSvg'), zpath = document.getElementById('zpath');
 zpath.setAttribute('d', logo.querySelector('path').getAttribute('d'));
+document.querySelector('#ctLogo path').setAttribute('d', zpath.getAttribute('d'));   // contact page: same official logo
 const whiteout = document.getElementById('whiteout'), hint = document.getElementById('hint');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -851,8 +882,9 @@ function update() {
   projects.style.setProperty('--bg', PAPER.map(c => Math.round(c * clamp((vh - rp.top) / (vh * .5)))).join(','));
   projects.style.setProperty('--e', clamp((vh - rp.top) / (vh * .85)).toFixed(4));
 
-  // project pages: background paper→black as the first one rises
-  const rw = work.getBoundingClientRect();
+  // project pages: background paper→black as the first one rises; contact: black→paper
+  const rw = work.getBoundingClientRect(), rc = contact.getBoundingClientRect();
+  contact.style.setProperty('--bg', PAPER.map(c => Math.round(c * clamp((vh - rc.top) / (vh * .5)))).join(','));
   work.style.setProperty('--bg', PAPER.map(c => Math.round(c * (1 - clamp((vh - rw.top) / (vh * .5))))).join(','));
   const inWork = rw.top <= vh * .5 && rw.bottom > vh * .5;
 
@@ -1007,7 +1039,7 @@ function show(i, instant) {
 }
 function step(d) {
   if (pages[pi + d]) show(pi + d);
-  else goTo(projects);   // past either end: back to the grid
+  else goTo(d < 0 ? projects : contact);   // past either end: back to the grid / on to the contact page
 }
 show(0, true);
 addEventListener('resize', () => show(pi, true));
