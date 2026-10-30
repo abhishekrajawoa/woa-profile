@@ -161,17 +161,17 @@
      white ones readable on the bright halftone. */
   .mark.ongoing,.cross.ongoing{--c:#f06410}
   .mark.done,.cross.done{--c:#fff}
-  .mark b,.cross{position:relative;display:block;width:100%;height:100%;filter:drop-shadow(0 0 1px rgba(20,20,20,.9)) drop-shadow(0 0 .5px rgba(20,20,20,.9));transition:transform .45s cubic-bezier(.2,.7,.2,1)}
-  .mark b::before,.mark b::after,.cross::before,.cross::after{content:"";position:absolute;left:0;top:50%;width:100%;height:24%;translate:0 -50%;background:var(--c)}
+  .mark b,.cross{position:relative;display:block;width:100%;height:100%;filter:drop-shadow(0 0 .6px rgba(0,0,0,.85));transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+  .mark b::before,.mark b::after,.cross::before,.cross::after{content:"";position:absolute;left:0;top:50%;width:100%;height:max(1.5px, 9%);translate:0 -50%;background:var(--c)}   /* hairline bars: a sleek '+' */
   .mark b::after,.cross::after{rotate:90deg}
   /* hover: the cross swells and sends out a ripple ring (an ongoing one stops spinning while hovered) */
   .mark i::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--c);opacity:0;pointer-events:none}
   .marks .mark:hover b{animation:none;transform:scale(1.9)}   /* .marks: outranks the spin rule below */
   .mark:hover i::after{animation:ripple 1.1s ease-out infinite}
   @keyframes ripple{from{transform:scale(1.9);opacity:.9}to{transform:scale(4.2);opacity:0}}
-  /* ongoing projects' crosses turn slowly (as in the PSD's MAP GIF 01); completed ones stay still */
-  .mark.ongoing b{animation:spin 3s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
+  /* ongoing projects' crosses sway a few degrees, slowly (a subtle take on the PSD's spin); completed ones stay still */
+  .mark.ongoing b{animation:spin 5s ease-in-out infinite}
+  @keyframes spin{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}}
   .map-text{position:absolute;z-index:2;left:var(--gx);top:calc(var(--top) + clamp(56px,12vh,130px))}
   .map-title{margin:0 0 .35em;font-family:var(--sans);font-weight:500;font-size:clamp(38px,5.6vw,100px);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:#fff}
   .map-title > span{display:block;overflow:hidden;padding-bottom:.04em}
