@@ -261,10 +261,6 @@
   /* the side nav steps aside on the project pages, where the « » arrows take over */
   .side{transition:opacity .4s}
   body.work .chrome .side{opacity:0;pointer-events:none}
-  #services{background:rgb(var(--bg,245,243,239))}
-
-  /* ---------- placeholder sections ---------- */
-  .slot{flex:1;min-height:220px;border:1.5px dashed var(--line);border-radius:6px;display:grid;place-items:center;color:var(--muted);font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:600}
 
   /* ---------- iPad portrait & small tablets ---------- */
   @media (max-width:900px){
@@ -462,7 +458,7 @@
 </section>
 
 <!-- 6–20 — PROJECT PAGES (Figma pages 6–20): one screen holding all the projects side by side, in the grid's order.
-     « » (or swipe / ← →) slide to the previous / next project; « on the first goes back to the grid, » on the last moves on -->
+     « » (or swipe / ← →) slide to the previous / next project; past either end goes back to the grid -->
 <div id="work">
 <div class="pp-track">
 <article class="pp" id="gardens-in-the-sky" style="--sum:2.1499" aria-label="Gardens in the Sky">
@@ -723,24 +719,10 @@
     <p class="pp-desc">Second Home is a 1,450-square-foot tropical brutalist workspace in Ernakulam, Kerala, designed as a fluid, open-plan studio centred around community, collaboration, and a constant relationship with nature. The space embraces a restrained material palette of exposed concrete, high-density fibreboard, and matte steel, balanced by over 100 potted tropical plants that provide natural ventilation, air purification, and acoustic comfort. Key architectural highlights include custom 240 cm ferrocement workstations, a dynamic pegboard atelier wall, and a central discussion zone featuring live furniture prototyping, creating the lived experience of a biophilic sanctuary that feels more like a home than a traditional office.</p>
   </div>
   <button class="pp-arrow prev" data-step="-1" aria-label="Previous project"><svg viewBox="0 0 40 30" aria-hidden="true"><path d="M4 3l12 12L4 27M21 3l12 12-12 12" fill="none" stroke="currentColor" stroke-width="6"/></svg></button>
-  <button class="pp-arrow next" data-step="1" aria-label="Next section"><svg viewBox="0 0 40 30" aria-hidden="true"><path d="M4 3l12 12L4 27M21 3l12 12-12 12" fill="none" stroke="currentColor" stroke-width="6"/></svg></button>
+  <button class="pp-arrow next" data-step="1" aria-label="Back to all projects"><svg viewBox="0 0 40 30" aria-hidden="true"><path d="M4 3l12 12L4 27M21 3l12 12-12 12" fill="none" stroke="currentColor" stroke-width="6"/></svg></button>
 </article>
 </div>
 </div>
-
-<!-- 4 — SERVICES (placeholder until the Figma page for this section arrives) -->
-<section id="services" class="section" data-label="Services">
-  <div class="eyebrow rv">05 — Services</div>
-  <h2 class="rv">Services</h2>
-  <div class="slot rv">Content to come</div>
-</section>
-
-<!-- 5 — CONTACT (placeholder until the Figma page for this section arrives) -->
-<section id="contact" class="section" data-label="Contact">
-  <div class="eyebrow rv">06 — Contact</div>
-  <h2 class="rv">Contact</h2>
-  <div class="slot rv">Content to come</div>
-</section>
 
 <!-- fixed chrome shown after the hero -->
 <div class="chrome">
@@ -754,7 +736,7 @@ document.documentElement.classList.add('js');
 const S = [...document.querySelectorAll('#home, .section')];
 const N = S.length;
 const home = S[0], founders = document.getElementById('founders'), awards = document.getElementById('awards'), locate = document.getElementById('locate'), projects = document.getElementById('projects');
-const work = document.getElementById('work'), services = document.getElementById('services');
+const work = document.getElementById('work');
 const logo = document.getElementById('logo'), zoomer = document.getElementById('zoomer');
 const stage = home.querySelector('.stage'), zoomSvg = document.getElementById('zoomSvg'), zpath = document.getElementById('zpath');
 zpath.setAttribute('d', logo.querySelector('path').getAttribute('d'));
@@ -858,10 +840,9 @@ function update() {
   projects.style.setProperty('--bg', PAPER.map(c => Math.round(32 + (c - 32) * clamp((vh - rp.top) / (vh * .5)))).join(','));
   projects.style.setProperty('--e', clamp((vh - rp.top) / (vh * .85)).toFixed(4));
 
-  // project pages: background paper→black as the first one rises; services: black→paper
-  const rw = work.getBoundingClientRect(), rs = services.getBoundingClientRect();
+  // project pages: background paper→black as the first one rises
+  const rw = work.getBoundingClientRect();
   work.style.setProperty('--bg', PAPER.map(c => Math.round(c * (1 - clamp((vh - rw.top) / (vh * .5))))).join(','));
-  services.style.setProperty('--bg', PAPER.map(c => Math.round(c * clamp((vh - rs.top) / (vh * .5)))).join(','));
   const inWork = rw.top <= vh * .5 && rw.bottom > vh * .5;
 
   // chrome: current section + light/dark
@@ -1014,7 +995,7 @@ function show(i, instant) {
 }
 function step(d) {
   if (pages[pi + d]) show(pi + d);
-  else goTo(d < 0 ? projects : services);   // past either end: back to the grid / on to the next section
+  else goTo(projects);   // past either end: back to the grid
 }
 show(0, true);
 addEventListener('resize', () => show(pi, true));
