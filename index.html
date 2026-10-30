@@ -12,11 +12,13 @@
   HOW IT WORKS
   - One continuous, smooth-scrolling page (Lenis). Animations are tied to scroll position,
     so scrolling back up plays them in reverse.
-  - Background video: media/Stock footage opening page.mp4 (30 s loop) (animated landscape scenes are shown if it is missing).
+  - Background video: media/Stock footage opening page.mp4 (30 s loop, faststart), with its first frame media/opening-poster.jpg shown until it plays
+    (animated landscape scenes only if the video can't load at all).
   - Founders photo: media/founders_web.jpg (web crop of media/Founders_1.jpg)
   - Awards & publications: the <img> lists in section 3 (media/awards/, media/publications/)
   - Sections still waiting for their Figma page are marked "placeholder" below.
 -->
+<link rel="preload" as="image" href="media/opening-poster.jpg" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -48,13 +50,12 @@
   /* the visible logo is drawn in a full-stage SVG so it stays sharp while zooming (see measure()) */
   .zoomsvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
   .js .logo{visibility:hidden}
-  .bg{position:absolute;inset:0}
+  .bg{position:absolute;inset:0;background:#55534e url(media/opening-poster.jpg) center/cover}   /* the video's first frame, shown until it plays */
   .scene{position:absolute;inset:0;opacity:0;transition:opacity 2.4s ease}
-  .scene.on{opacity:1}
+  #home.no-video .scene.on{opacity:1}   /* fallback only when the video can't load */
   .scene svg{width:100%;height:100%;display:block;animation:drift 14s ease-in-out infinite alternate}
   @keyframes drift{from{transform:scale(1.02) translateX(-1%)}to{transform:scale(1.12) translateX(1.5%)}}
-  #bgv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
-  #home.has-video #bgv{opacity:1}
+  #bgv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .shade{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,0,0,.05),rgba(0,0,0,.35))}
 
   .home-ui{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
@@ -333,7 +334,7 @@
   <div class="stage">
     <div class="bg">
       <div id="scenes"></div>
-      <video id="bgv" autoplay muted loop playsinline webkit-playsinline disablepictureinpicture disableremoteplayback preload="metadata">
+      <video id="bgv" autoplay muted loop playsinline webkit-playsinline disablepictureinpicture disableremoteplayback preload="auto" poster="media/opening-poster.jpg">
         <source src="media/Stock%20footage%20opening%20page.mp4" type="video/mp4">
       </video>
       <div class="shade"></div>
@@ -1082,12 +1083,11 @@ if (!reduce) setInterval(() => {
 }, 7000);
 
 const v = document.getElementById('bgv');
-v.addEventListener('playing', () => home.classList.add('has-video'));
-// iOS Low Power Mode blocks autoplay; the animated scenes simply stay visible in that case
+// iOS Low Power Mode blocks autoplay; the first frame (poster) simply stays on screen in that case
 const tryPlay = () => v.isConnected && v.paused && v.play().catch(() => {});
 tryPlay();
 addEventListener('touchstart', tryPlay, {once:true, passive:true});
-v.querySelector('source').addEventListener('error', () => v.remove());
+v.querySelector('source').addEventListener('error', () => { v.remove(); home.classList.add('no-video'); });
 </script>
 </body>
 </html>
