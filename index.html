@@ -149,7 +149,8 @@
   /* the whole of India (Delhi in the north), as large as fits; --mh = map height, .9867 = map width/height.
      Wide screens: centred, nudged right if needed to clear the title. */
   .map-fig{--mh:min(calc(100lvh - 72px), calc((100vw - var(--gx) - var(--gxr)) / .9867));position:absolute;margin:0;top:50%;left:max(50%, calc(var(--gx) + 24vw + var(--mh) * .493));width:calc(var(--mh) * .9867);height:var(--mh);translate:-50% -50%;opacity:var(--e);transform:scale(calc(1.12 - var(--e) * .12))}
-  .map-fig img{display:block;width:100%;height:100%;-webkit-user-select:none;user-select:none;-webkit-user-drag:none}
+  .map-fig img{display:block;width:100%;height:100%;opacity:.38;   /* the white halftone softened to a mild grey */
+    -webkit-user-select:none;user-select:none;-webkit-user-drag:none}
   .marks{position:absolute;inset:0;list-style:none}
   /* project markers: dark dots, as in the map PSD. They pop in north→south while the map comes in
      (--i = order), so all of them are showing once the map is fully on screen. */
@@ -157,14 +158,13 @@
   .mark::before{content:"";position:absolute;inset:-10px;border-radius:50%}   /* bigger hover / tap target */
   .mark:hover{z-index:2}
   .mark i{position:relative;display:block;width:100%;height:100%;transform:scale(clamp(0, calc((var(--e) - .55) * 45 - var(--i)), 1))}
-  /* markers are crosses: orange = ongoing, white = completed (Figma legend). A thin dark edge keeps the
-     white ones readable on the bright halftone. */
-  .mark.ongoing,.cross.ongoing{--c:#f06410}
-  .mark.done,.cross.done{--c:#fff}
+  /* markers are crosses (Figma legend), monochrome: white = ongoing, grey = completed. A thin dark edge
+     keeps them crisp against the halftone. */
+  .mark.ongoing,.cross.ongoing{--c:#fff}      /* monochrome: ongoing = white (and sways) */
+  .mark.done,.cross.done{--c:#a8a8a8}       /* completed = light grey (still) */
   .mark b,.cross{position:relative;display:block;width:100%;height:100%;filter:drop-shadow(0 0 .8px #000) drop-shadow(0 0 .4px #000);transition:transform .45s cubic-bezier(.2,.7,.2,1)}
   /* hairline arms (--t), each drawn on its own so both stay crisp at small sizes: a sleek '+' */
   .mark b,.cross{--t:2px}
-  .mark.done b{filter:drop-shadow(0 0 1px #000) drop-shadow(0 0 1px #000) drop-shadow(0 0 .5px #000)}   /* white on the bright halftone needs a firmer edge */
   @media (min-resolution:2dppx){.mark b,.cross{--t:1.5px}}
   .mark b::before,.mark b::after,.cross::before,.cross::after{content:"";position:absolute;background:var(--c)}
   .mark b::before,.cross::before{left:0;right:0;top:calc(50% - var(--t) / 2);height:var(--t)}
