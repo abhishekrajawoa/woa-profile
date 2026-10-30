@@ -146,9 +146,9 @@
      --e: 0→1 as the section enters; --bg: background paper→#202020 (the map PSD's fill) */
   #locate{--e:0;display:block;padding:0;height:200vh;height:200lvh;background:rgb(var(--bg,245,243,239));color:var(--paper)}
   .map-stage{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden}
-  /* the whole of India (Delhi in the north), as large as fits; --mh = map height, .9191 = map width/height.
+  /* the whole of India (Delhi in the north), as large as fits; --mh = map height, .9867 = map width/height.
      Wide screens: centred, nudged right if needed to clear the title. */
-  .map-fig{--mh:min(calc(100lvh - 72px), calc((100vw - var(--gx) - var(--gxr)) / .9191));position:absolute;margin:0;top:50%;left:max(50%, calc(var(--gx) + 24vw + var(--mh) * .46));width:calc(var(--mh) * .9191);height:var(--mh);translate:-50% -50%;opacity:var(--e);transform:scale(calc(1.12 - var(--e) * .12))}
+  .map-fig{--mh:min(calc(100lvh - 72px), calc((100vw - var(--gx) - var(--gxr)) / .9867));position:absolute;margin:0;top:50%;left:max(50%, calc(var(--gx) + 24vw + var(--mh) * .493));width:calc(var(--mh) * .9867);height:var(--mh);translate:-50% -50%;opacity:var(--e);transform:scale(calc(1.12 - var(--e) * .12))}
   .map-fig img{display:block;width:100%;height:100%;-webkit-user-select:none;user-select:none;-webkit-user-drag:none}
   .marks{position:absolute;inset:0;list-style:none}
   /* project markers: dark dots, as in the map PSD. They pop in north→south while the map comes in
@@ -177,7 +177,7 @@
   /* tall screens (phones, iPad portrait): title on top, map centred in the space below it
      (the map is never cropped, so the north-east stays in view) */
   @media (orientation:portrait){
-    .map-fig{--mh:min(calc(100lvh - 300px), calc((100vw - var(--gx) - var(--gxr)) / .9191));top:calc(276px + (100lvh - 300px - var(--mh)) / 2);left:50%;translate:-50% 0}
+    .map-fig{--mh:min(calc(100lvh - 300px), calc((100vw - var(--gx) - var(--gxr)) / .9867));top:calc(276px + (100lvh - 300px - var(--mh)) / 2);left:50%;translate:-50% 0}
   }
 
   /* ---------- projects grid (Figma page 5) ---------- */
@@ -408,7 +408,7 @@
 <section id="locate" class="section dark" data-label="Locate us">
   <div class="map-stage">
     <figure class="map-fig">
-      <img src="media/map/india-map.png" alt="Map of India showing ongoing and completed Workers of Art projects">
+      <img src="media/map/india-halftone.png" alt="Map of India showing ongoing and completed Workers of Art projects">
       <ul class="marks" id="marks" aria-hidden="true"></ul>
     </figure>
     <div class="map-text">
@@ -862,27 +862,28 @@ function update() {
 }
 
 /* ---------- locate us: project markers ---------- */
-// [x %, y %, 'ongoing' | 'done'] on media/map/india-map.png, north → south; measured from the map PSD frames
+// [x %, y %, 'ongoing' | 'done'] on media/map/india-halftone.png, north → south; measured from the map PSD frames,
+// then carried over to the halftone map (best-fit of the two outlines)
 const MARKS = [
-  [32.20, 28.44, 'done'],      // Delhi
-  [60.89, 57.00, 'done'],
-  [38.02, 68.39, 'ongoing'],
-  [44.34, 71.78, 'ongoing'],
-  [20.77, 74.93, 'ongoing'],
-  [30.21, 79.36, 'ongoing'],
-  [33.39, 84.13, 'done'],
-  [25.11, 85.94, 'ongoing'],
-  [35.84, 86.31, 'ongoing'],
-  [26.59, 87.75, 'done'],
-  [31.11, 88.08, 'ongoing'],
-  [28.29, 89.92, 'ongoing'],
-  [31.10, 90.34, 'ongoing'],
-  [37.21, 91.00, 'done'],
-  [34.96, 92.15, 'ongoing'],
-  [31.06, 93.88, 'ongoing'],
-  [28.48, 93.92, 'done'],
-  [34.04, 95.73, 'ongoing'],
-  [30.22, 96.18, 'ongoing'],
+  [32.35, 28.10, 'done'],      // Delhi
+  [59.71, 55.34, 'done'],
+  [37.90, 66.21, 'ongoing'],
+  [43.93, 69.44, 'ongoing'],
+  [21.45, 72.45, 'ongoing'],
+  [30.45, 76.67, 'ongoing'],
+  [33.49, 81.22, 'done'],
+  [25.59, 82.95, 'ongoing'],
+  [35.82, 83.30, 'ongoing'],
+  [27.00, 84.68, 'done'],
+  [31.31, 84.99, 'ongoing'],
+  [28.62, 86.75, 'ongoing'],
+  [31.30, 87.15, 'ongoing'],
+  [37.13, 87.78, 'done'],
+  [34.98, 88.87, 'ongoing'],
+  [31.26, 90.52, 'ongoing'],
+  [28.80, 90.56, 'done'],
+  [34.11, 92.29, 'ongoing'],
+  [30.46, 92.72, 'ongoing'],
 ];
 document.getElementById('marks').innerHTML = MARKS.map(([x, y, st], i) =>
   `<li class="mark ${st}" style="--x:${x}%;--y:${y}%;--i:${i}"><i><b></b></i></li>`).join('');
