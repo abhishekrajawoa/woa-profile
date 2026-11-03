@@ -201,11 +201,19 @@
   .t-oth{--t:#353839;--tc:#fff}
   .t-com{--t:#696969;--tc:#fff}
   .t-prod{--t:#dcdcdc;--tc:var(--ink)}
-  .pj-key{list-style:none;display:flex;flex-wrap:wrap;gap:6px 20px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--muted);opacity:clamp(0, calc(var(--e) * 4 - 2.4), 1)}
-  .pj-key li{display:flex;align-items:center;gap:8px}
-  .pj-key li::before{content:"";width:11px;height:11px;background:var(--t);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+  .pj-key{list-style:none;display:flex;flex-wrap:wrap;gap:0 20px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--muted);opacity:clamp(0, calc(var(--e) * 4 - 2.4), 1)}
+  /* the key doubles as the filter: click a type to show only those projects (see setFilter) */
+  .pj-key button{display:flex;align-items:center;gap:8px;padding:8px 0;font-weight:600;letter-spacing:inherit;text-transform:inherit;color:var(--muted);text-underline-offset:4px;transition:color .25s}
+  .pj-key button:not([data-filter="all"])::before{content:"";width:11px;height:11px;background:var(--t);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+  .pj-key button[aria-pressed="true"]{color:var(--ink);text-decoration:underline}
+  .pj-key button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  @media (hover:hover){.pj-key button:hover{color:var(--ink)}}
   .pj-grid{list-style:none;display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(12px,2.2vw,30px)}
   .pj-grid > li{--r:clamp(0, calc((var(--e) - .45) * 5 - var(--i) * .12), 1);opacity:var(--r);transform:translateY(calc((1 - var(--r)) * 36px))}
+  .pj-grid > li[hidden]{display:none}
+  .pj-grid > li.pj-in{animation:pjIn .45s cubic-bezier(.2,.7,.2,1) calc(var(--i) * 35ms) backwards}
+  @keyframes pjIn{from{opacity:0;translate:0 14px}}
+  @media (prefers-reduced-motion:reduce){.pj-grid > li.pj-in{animation:none}}
   .tile{display:block;color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
   .tile .ph{display:block;aspect-ratio:1;overflow:hidden;background:#ddd}
   .tile img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .5s}
@@ -453,11 +461,12 @@
   <div class="pj">
     <div class="pj-head">
       <h2 class="pj-title">Projects</h2>
-      <ul class="pj-key" aria-label="Project types">
-        <li class="t-res">Residential</li>
-        <li class="t-com">Commercial / Retail</li>
-        <li class="t-prod">Product</li>
-        <li class="t-oth">Others</li>
+      <ul class="pj-key" aria-label="Filter projects by type">
+        <li><button type="button" data-filter="all" aria-pressed="true">All</button></li>
+        <li><button type="button" class="t-res" data-filter="res" aria-pressed="false">Residential</button></li>
+        <li><button type="button" class="t-com" data-filter="com" aria-pressed="false">Commercial / Retail</button></li>
+        <li><button type="button" class="t-prod" data-filter="prod" aria-pressed="false">Product</button></li>
+        <li><button type="button" class="t-oth" data-filter="oth" aria-pressed="false">Others</button></li>
       </ul>
     </div>
     <ul class="pj-grid">
@@ -1036,11 +1045,43 @@ function show(i, instant) {
   work.style.height = pages[i].offsetHeight + 'px';   // phones: pages differ in height
   if (instant) track.offsetWidth;   // apply the jump before transitions come back
 }
+let activePages = pages;   // the projects the grid's filter currently shows; « » only step through these
 function step(d) {
-  if (pages[pi + d]) show(pi + d);
+  const next = activePages[activePages.indexOf(pages[pi]) + d];
+  if (next) show(pages.indexOf(next));
   else goTo(d < 0 ? projects : contact);   // past either end: back to the grid / on to the contact page
 }
 show(0, true);
+/* ---------- projects filter: the type key shows one type at a time; clicking the active type (or All) shows everything ---------- */
+const keyBtns = [...projects.querySelectorAll('.pj-key button')], pjItems = [...projects.querySelectorAll('.pj-grid > li')];
+const pjHead = projects.querySelector('.pj-head'), pjNext = projects.querySelector('.pj-next');
+function setFilter(type) {
+  const headTop = pjHead.getBoundingClientRect().top;
+  let n = 0;
+  activePages = [];
+  pjItems.forEach(li => {
+    const a = li.querySelector('a'), on = type === 'all' || a.classList.contains('t-' + type);
+    li.hidden = !on;
+    li.classList.remove('pj-in');
+    if (!on) return;
+    li.style.setProperty('--i', n++);   // no gaps in the tiles' scroll-in order
+    void li.offsetWidth;   // restart the fade
+    li.classList.add('pj-in');
+    activePages.push(pages.find(pg => pg.id === a.getAttribute('href').slice(1)));
+  });
+  keyBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.filter === type));
+  pjNext.setAttribute('href', '#' + activePages[0].id);
+  if (!activePages.includes(pages[pi])) show(pages.indexOf(activePages[0]), true);
+  // the grid's height just changed: keep the heading and key exactly where they were on screen
+  if (lenis) lenis.resize();
+  const dy = pjHead.getBoundingClientRect().top - headTop;
+  if (Math.abs(dy) > .5) {
+    if (lenis) lenis.scrollTo(scrollY + dy, {immediate:true, force:true});
+    else scrollTo(0, scrollY + dy);
+  }
+  lastY = -1;
+}
+keyBtns.forEach(b => b.addEventListener('click', () => setFilter(b.getAttribute('aria-pressed') === 'true' ? 'all' : b.dataset.filter)));
 addEventListener('resize', () => show(pi, true));
 // tiles: jump straight to that project, then scroll down to it
 document.querySelectorAll('#projects a[href^="#"]').forEach(a => a.addEventListener('click', e => {
