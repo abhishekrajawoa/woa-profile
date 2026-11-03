@@ -210,16 +210,16 @@
   .pj-key button[aria-pressed="true"]{color:var(--ink);text-decoration:underline}
   .pj-key button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   @media (hover:hover){.pj-key button:hover{color:var(--ink)}}
-  .pj-grid{list-style:none;display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(12px,2.2vw,30px)}
+  .pj-grid{list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(12px,2.2vw,30px)}
   .pj-grid > li{--r:clamp(0, calc((var(--e) - .45) * 5 - var(--i) * .12), 1);opacity:var(--r);transform:translateY(calc((1 - var(--r)) * 36px))}
   .pj-grid > li[hidden]{display:none}
   .pj-grid > li.pj-in{animation:pjIn .45s cubic-bezier(.2,.7,.2,1) calc(var(--i) * 35ms) backwards}
   @keyframes pjIn{from{opacity:0;translate:0 14px}}
   @media (prefers-reduced-motion:reduce){.pj-grid > li.pj-in{animation:none}}
-  .tile{display:block;color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
-  .tile .ph{display:block;aspect-ratio:1;overflow:hidden;background:#ddd}
+  .tile{display:flex;flex-direction:column;height:100%;color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+  .tile .ph{display:block;flex:none;aspect-ratio:1;overflow:hidden;background:#ddd}
   .tile img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .5s}
-  .tile .cap{display:block;background:var(--t);color:var(--tc);font-size:clamp(10px,.95vw,14px);font-weight:500;line-height:1.25;letter-spacing:.02em;text-transform:uppercase;padding:.32em .45em}
+  .tile .cap{display:block;flex:1;background:var(--t);color:var(--tc);font-size:clamp(10px,.95vw,14px);font-weight:500;line-height:1.25;letter-spacing:.02em;text-transform:uppercase;padding:.32em .45em}
   .tile .cap i{display:inline-block;font-style:normal;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
   .tile:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
   /* hover: the photo zooms, the "+" turns, and the other tiles step back */
@@ -227,6 +227,16 @@
     .tile:hover img{transform:scale(1.07)}
     .tile:hover .cap i{transform:rotate(90deg)}
     .pj-grid:has(.tile:hover) .tile:not(:hover) img{opacity:.45}
+  }
+
+  /* landscape screens (iPad, laptop): all three rows fit on one screen, vertically centred. The grid's width is worked out
+     from the height actually available: padding, heading, gaps and three two-line captions, leaving three rows of square photos. */
+  @media (orientation:landscape) and (min-height:501px) and (min-width:901px){
+    #projects{--pad:clamp(24px,4svh,48px);--g:clamp(12px,2.2vw,30px);--c:calc(clamp(10px,.95vw,14px) * 3.14);padding-top:calc(var(--pad) + env(safe-area-inset-top));padding-bottom:calc(var(--pad) + env(safe-area-inset-bottom))}
+    .pj{width:min(100%,1180px,calc((100svh - 2 * var(--pad) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - var(--title) * .95 - clamp(16px,2.4vw,30px) - 2 * var(--g) - 3 * var(--c)) / 3 * 5 + 4 * var(--g)))}
+    .pj-head{flex-wrap:nowrap}
+    .pj-title{flex:none}
+    .pj-key{justify-content:flex-end}
   }
 
   /* ---------- project pages (Figma pages 6–20) ---------- */
