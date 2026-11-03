@@ -271,6 +271,7 @@
   .pp-title > span > span{display:block}
   .pp-press{list-style:none;display:flex;gap:calc(var(--w) * .012);flex:none}
   .pp-press img{display:block;height:calc(var(--w) * .128);width:auto}
+  .pp-press:has(li:nth-child(3)) img{height:calc(var(--w) * .09)}   /* three logos beside a long title stay inside the column */
   .pp-row{display:flex;gap:calc(var(--w) * .005 + 1px);aspect-ratio:var(--sum)}
   .pp-row figure{flex:var(--a) 1 0;min-width:0;margin:0;overflow:hidden;background:#111}
   .pp-row img{display:block;width:100%;height:100%;object-fit:cover}
@@ -517,8 +518,7 @@
     <header class="pp-head">
       <h2 class="pp-title"><span><span>Gardens</span></span><span><span>in the Sky</span></span></h2>
       <ul class="pp-press" aria-label="Featured in">
-        <li><img src="media/press/sobha.png" alt="Sobha Realty" width="107" height="107" loading="lazy"></li>
-        <li><img src="media/press/ad.png" alt="Architectural Digest" width="107" height="107" loading="lazy"></li>
+        <li><img src="media/press/ad.png" alt="Architectural Digest" width="320" height="320" loading="lazy"></li>
       </ul>
     </header>
     <div class="pp-row">
@@ -567,8 +567,8 @@
     <header class="pp-head">
       <h2 class="pp-title"><span><span>Perched</span></span></h2>
       <ul class="pp-press" aria-label="Featured in">
-        <li><img src="media/press/elle-decor.png" alt="Elle Decor" width="223" height="108" loading="lazy"></li>
-        <li><img src="media/press/volume-zero.png" alt="Volume Zero" width="108" height="108" loading="lazy"></li>
+        <li><img src="media/press/elle-decor.png" alt="Elle Decor" width="660" height="320" loading="lazy"></li>
+        <li><img src="media/press/volume-zero.png" alt="Volume Zero" width="319" height="320" loading="lazy"></li>
       </ul>
     </header>
     <div class="pp-row">
@@ -585,6 +585,9 @@
   <div class="pp-in">
     <header class="pp-head">
       <h2 class="pp-title"><span><span>Ammaveedu</span></span></h2>
+      <ul class="pp-press" aria-label="Featured in">
+        <li><img src="media/press/sobha.png" alt="Sobha Realty" width="320" height="320" loading="lazy"></li>
+      </ul>
     </header>
     <div class="pp-row">
         <figure style="--a:0.7215;--k:0"><img src="media/work/ammaveedu/1.jpg" alt="Ammaveedu, photo 1" width="272" height="377" loading="lazy" decoding="async"></figure>
@@ -616,8 +619,8 @@
     <header class="pp-head">
       <h2 class="pp-title"><span><span>Ribbon</span></span></h2>
       <ul class="pp-press" aria-label="Featured in">
-        <li><img src="media/press/baunetz.png" alt="BauNetz interior|design" width="260" height="108" loading="lazy"></li>
-        <li><img src="media/press/yellowtrace.png" alt="Yellowtrace" width="271" height="108" loading="lazy"></li>
+        <li><img src="media/press/baunetz.png" alt="BauNetz interior|design" width="769" height="320" loading="lazy"></li>
+        <li><img src="media/press/yellowtrace.png" alt="Yellowtrace" width="799" height="320" loading="lazy"></li>
       </ul>
     </header>
     <div class="pp-row">
@@ -636,7 +639,7 @@
     <header class="pp-head">
       <h2 class="pp-title"><span><span>Booyah</span></span></h2>
       <ul class="pp-press" aria-label="Featured in">
-        <li><img src="media/press/elle-decor.png" alt="Elle Decor" width="223" height="108" loading="lazy"></li>
+        <li><img src="media/press/elle-decor.png" alt="Elle Decor" width="660" height="320" loading="lazy"></li>
       </ul>
     </header>
     <div class="pp-row">
@@ -654,8 +657,9 @@
     <header class="pp-head">
       <h2 class="pp-title"><span><span>Recollections</span></span></h2>
       <ul class="pp-press" aria-label="Featured in">
-        <li><img src="media/press/design-pataki.png" alt="Design Pataki India" width="177" height="108" loading="lazy"></li>
-        <li><img src="media/press/stir.png" alt="STIR" width="280" height="280" loading="lazy"></li>
+        <li><img src="media/press/design-pataki.png" alt="Design Pataki India" width="525" height="320" loading="lazy"></li>
+        <li><img src="media/press/stir.png" alt="STIR" width="320" height="320" loading="lazy"></li>
+        <li><img src="media/press/sobha.png" alt="Sobha Realty" width="320" height="320" loading="lazy"></li>
       </ul>
     </header>
     <div class="pp-row">
@@ -705,7 +709,7 @@
     <header class="pp-head">
       <h2 class="pp-title"><span><span>Lime &amp; Steel</span></span></h2>
       <ul class="pp-press" aria-label="Featured in">
-        <li><img src="media/press/elle-decor.png" alt="Elle Decor" width="223" height="108" loading="lazy"></li>
+        <li><img src="media/press/elle-decor.png" alt="Elle Decor" width="660" height="320" loading="lazy"></li>
       </ul>
     </header>
     <div class="pp-row">
@@ -723,7 +727,8 @@
     <header class="pp-head">
       <h2 class="pp-title"><span><span>Toasted</span></span></h2>
       <ul class="pp-press" aria-label="Featured in">
-        <li><img src="media/press/ad.png" alt="Architectural Digest" width="107" height="107" loading="lazy"></li>
+        <li><img src="media/press/galaxy.png" alt="Galaxy Realty" width="524" height="320" loading="lazy"></li>
+        <li><img src="media/press/ad.png" alt="Architectural Digest" width="320" height="320" loading="lazy"></li>
       </ul>
     </header>
     <div class="pp-row">
@@ -741,6 +746,9 @@
   <div class="pp-in">
     <header class="pp-head">
       <h2 class="pp-title"><span><span>Neytt</span></span></h2>
+      <ul class="pp-press" aria-label="Featured in">
+        <li><img src="media/press/ad.png" alt="Architectural Digest" width="320" height="320" loading="lazy"></li>
+      </ul>
     </header>
     <div class="pp-row">
         <figure style="--a:0.5892;--k:0"><img src="media/work/neytt/1.jpg" alt="Neytt, photo 1" width="218" height="370" loading="lazy" decoding="async"></figure>
@@ -758,8 +766,8 @@
     <header class="pp-head">
       <h2 class="pp-title"><span><span>WOA</span></span><span><span>Second Home</span></span></h2>
       <ul class="pp-press" aria-label="Featured in">
-        <li><img src="media/press/design-pataki.png" alt="Design Pataki India" width="177" height="108" loading="lazy"></li>
-        <li><img src="media/press/dezeen.png" alt="Dezeen" width="209" height="108" loading="lazy"></li>
+        <li><img src="media/press/design-pataki.png" alt="Design Pataki India" width="525" height="320" loading="lazy"></li>
+        <li><img src="media/press/dezeen.png" alt="Dezeen" width="320" height="320" loading="lazy"></li>
       </ul>
     </header>
     <div class="pp-row">
@@ -802,7 +810,8 @@
 </section>
 
 <!-- image carousel, opened from the photos on a project page -->
-<dialog id="lb" aria-label="Project images">
+<!-- data-lenis-prevent: while stopped, Lenis cancels any touch with vertical drift, which would kill the swipe -->
+<dialog id="lb" aria-label="Project images" data-lenis-prevent>
   <div class="lb-head"><span id="lbTitle"></span> &nbsp;<span id="lbCount"></span></div>
   <button type="button" class="lb-btn lb-close" aria-label="Close"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 2l16 16M18 2L2 18" fill="none" stroke="currentColor" stroke-width="2.5"/></svg></button>
   <button type="button" class="lb-btn lb-arrow lb-prev" aria-label="Previous image"><svg viewBox="0 0 40 30" aria-hidden="true"><path d="M4 3l12 12L4 27M21 3l12 12-12 12" fill="none" stroke="currentColor" stroke-width="6"/></svg></button>
