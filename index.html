@@ -35,6 +35,7 @@
     --gx:max(clamp(16px,6vw,96px), calc(env(safe-area-inset-left) + 12px));
     --gxr:max(clamp(16px,6vw,96px), calc(env(safe-area-inset-right) + 12px));
     --top:calc(clamp(20px,4vh,36px) + env(safe-area-inset-top));
+    --title:clamp(38px,min(5vw,9.500vh),90px);   /* one size for every section and project title; vh keeps "OUR WORK." clear of the map on short windows */
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{background:var(--paper);-webkit-text-size-adjust:100%;text-size-adjust:100%}
@@ -108,7 +109,7 @@
   /* starts at the page margin (same left edge as the Awards heading) and fills the width,
      capped so the photo still fits on screen and stops short of the side navigation labels */
   .fd{position:relative;container-type:inline-size;width:min(100% - 80px,calc((100vh - 120px) * 1.7));margin:clamp(40px,7vh,80px) 0 0}
-  .fd-title{position:absolute;left:0;top:-.895em;z-index:2;margin:0;font-family:var(--sans);font-weight:500;font-size:clamp(38px,5.6vw,100px);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:#fff;transform:translateY(calc((1 - var(--p)) * -8cqw))}
+  .fd-title{position:absolute;left:0;top:-.895em;z-index:2;margin:0;font-family:var(--sans);font-weight:500;font-size:var(--title);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:#fff;transform:translateY(calc((1 - var(--p)) * -8cqw))}
   .fd-title > span{display:block;overflow:hidden;padding-bottom:.04em}
   .fd-title > span > span{display:block;transform:translateY(calc((1 - min(1, var(--p) * 1.6)) * 105%))}
   .fd-title > span + span > span{transform:translateY(calc((1 - min(1, max(0, var(--p) * 1.6 - .15))) * 105%))}
@@ -121,7 +122,7 @@
   /* ---------- awards & publications (Figma page 3) — two endless rows drifting in opposite directions ---------- */
   /* --p: 0→1 as the section scrolls into place; --bg: background black→paper */
   #awards{--p:0;background:rgb(var(--bg,245,243,239));overflow:hidden;gap:clamp(36px,9vh,110px)}
-  .aw-title{margin:0;font-family:var(--sans);font-weight:500;font-size:clamp(38px,5.6vw,100px);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink)}
+  .aw-title{margin:0;font-family:var(--sans);font-weight:500;font-size:var(--title);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink)}
   .aw-title > span{display:block;overflow:hidden;padding-bottom:.04em}
   .aw-title > span > span{display:block;transform:translateY(calc((1 - min(1, var(--p) * 1.6)) * 105%))}
   .aw-title > span + span > span{transform:translateY(calc((1 - min(1, max(0, var(--p) * 1.6 - .15))) * 105%))}
@@ -174,12 +175,10 @@
   /* hover: a small grow */
   .mark:hover b{transform:scale(1.35)}
   .map-text{position:absolute;z-index:2;left:var(--gx);top:calc(var(--top) + clamp(56px,12vh,130px))}
-  .map-title{margin:0 0 .35em;font-family:var(--sans);font-weight:500;font-size:clamp(38px,5.6vw,100px);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:#fff}
+  .map-title{margin:0 0 .35em;font-family:var(--sans);font-weight:500;font-size:var(--title);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:#fff}
   .map-title > span{display:block;overflow:hidden;padding-bottom:.04em}
   .map-title > span > span{display:block;transform:translateY(calc((1 - min(1, var(--e) * 1.4)) * 105%))}
   .map-title > span + span > span{transform:translateY(calc((1 - min(1, max(0, var(--e) * 1.4 - .15))) * 105%))}
-  /* wide screens: the map starts 24vw from the margin, so "OUR WORK." is sized to fit inside that space */
-  @media (orientation:landscape){.map-title{font-size:clamp(28px,4.2vw,100px)}}
   .legend{list-style:none;display:grid;gap:6px;font-size:clamp(12px,1vw,15px);font-weight:500;letter-spacing:.22em;text-transform:uppercase;opacity:clamp(0, calc(var(--e) * 3 - 2), 1)}
   .legend li{display:flex;align-items:center;gap:1.1em}
   .legend .cross{flex:none;width:10px;height:10px;filter:none}
@@ -196,7 +195,7 @@
   .pj{width:min(100%, 1180px, calc((100lvh - 280px) * 1.6));margin:0 auto}
   .pj-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px 32px;margin-bottom:clamp(16px,2.4vw,30px)}
   /* "the heading moves into place": starts big and lower-right, settles top-left */
-  .pj-title{--h:min(1, calc(var(--e) * 1.6));margin:0;font-family:var(--sans);font-weight:500;font-size:clamp(38px,5vw,90px);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink);transform-origin:0 100%;opacity:min(1, calc(var(--e) * 3));transform:translate(calc((1 - var(--h)) * 18vw), calc((1 - var(--h)) * 28vh)) scale(calc(1 + (1 - var(--h)) * .9))}
+  .pj-title{--h:min(1, calc(var(--e) * 1.6));margin:0;font-family:var(--sans);font-weight:500;font-size:var(--title);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink);transform-origin:0 100%;opacity:min(1, calc(var(--e) * 3));transform:translate(calc((1 - var(--h)) * 18vw), calc((1 - var(--h)) * 28vh)) scale(calc(1 + (1 - var(--h)) * .9))}
   /* typology key — the caption bar's grey shows the project type (from the Figma note) */
   .t-arch{--t:#c0c0c0;--tc:var(--ink)}
   .t-int{--t:#353839;--tc:#fff}
@@ -233,7 +232,7 @@
   .pp{--side:clamp(52px,9vw,150px);--w:min(calc(100vw - 2 * var(--side)), calc((100svh - 190px) * 1.45), 1240px);position:relative;min-height:100vh;min-height:100svh;display:grid;place-items:center;padding:calc(var(--top) + 52px) 0 calc(44px + env(safe-area-inset-bottom))}
   .pp-in{width:var(--w)}
   .pp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:calc(var(--w) * .04);margin-bottom:calc(var(--w) * .014)}
-  .pp-title{position:relative;margin:0;font-family:var(--sans);font-weight:500;font-size:calc(var(--w) * .072);line-height:.9;letter-spacing:-.02em;text-transform:uppercase}
+  .pp-title{position:relative;margin:0;font-family:var(--sans);font-weight:500;font-size:var(--title);line-height:.9;letter-spacing:-.02em;text-transform:uppercase}
   .pp-title::before{content:"+";position:absolute;right:calc(100% + .06em);top:0}   /* the "+" hangs in the gutter, as in Figma */
   .pp-title > span{display:block;overflow:hidden;padding-bottom:.06em}
   .pp-title > span > span{display:block}
@@ -302,7 +301,6 @@
     /* project pages: full-width column, logos under the title, photos become a sideways swipe strip, arrows at the bottom */
     .pp{--w:calc(100vw - var(--gx) - var(--gxr));place-items:start center;padding:calc(var(--top) + 60px) 0 calc(84px + env(safe-area-inset-bottom))}
     .pp-head{flex-direction:column;gap:14px;margin-bottom:16px}
-    .pp-title{font-size:calc(var(--w) * .115)}
     .pp-title::before{content:none}
     .pp-title > span:first-child > span::before{content:"+"}
     .pp-press img{height:52px}
@@ -324,7 +322,6 @@
     .home-dots span{font-size:9px;letter-spacing:.12em}
     h2{font-size:clamp(40px,12vw,64px)}
     .fd{margin-top:22vw}
-    .fd-title{font-size:12.5cqw;top:-10cqw}
     .fd-photo{margin-left:6%;aspect-ratio:4/5}          /* portrait crop keeps both founders large */
     .fd-photo img{object-position:50% 50%}
     .fd-cap{margin-left:6%;padding-top:16px}
@@ -333,6 +330,7 @@
   }
   /* ---------- iPhone landscape (short screens) ---------- */
   @media (max-height:500px) and (orientation:landscape){
+    :root{--title:clamp(28px,4vw,40px)}
     .pp{--w:min(calc(100vw - 2 * var(--side)), calc((100svh - 96px) * 1.55));padding:calc(var(--top) + 30px) 0 calc(20px + env(safe-area-inset-bottom))}
     .logo,.home-dots{width:min(62vw,125vh)}
     .home-dots{margin-top:7vh}
