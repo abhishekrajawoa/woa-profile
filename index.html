@@ -215,10 +215,11 @@
      from the height actually available: padding, heading, gaps and three two-line captions, leaving three rows of square photos. */
   @media (orientation:landscape) and (min-height:501px) and (min-width:901px){
     #projects{--pad:clamp(24px,4svh,48px);--g:clamp(12px,2.2vw,30px);--c:calc(clamp(10px,.95vw,14px) * 3.14);padding-top:calc(var(--pad) + env(safe-area-inset-top));padding-bottom:calc(var(--pad) + env(safe-area-inset-bottom))}
-    .pj{width:min(100%,1180px,calc((100svh - 2 * var(--pad) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - var(--title) * .95 - clamp(16px,2.4vw,30px) - 2 * var(--g) - 3 * var(--c)) / 3 * 5 + 4 * var(--g)))}
-    .pj-head{flex-wrap:nowrap}
-    .pj-title{flex:none}
-    .pj-key{justify-content:flex-end}
+    .pj{--kw:125px;--kg:24px;position:relative;width:min(100%,1180px,100vw - 2 * (var(--kw) + var(--kg) + 16px),calc((100svh - 2 * var(--pad) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - var(--title) * .95 - clamp(16px,2.4vw,30px) - 2 * var(--g) - 3 * var(--c)) / 3 * 5 + 4 * var(--g)))}
+    /* the type key: a straight column to the right of the grid's last column, level with the first row (the grid itself stays centred) */
+    .pj-key{position:absolute;left:calc(100% + var(--kg));top:calc(var(--title) * .95 + clamp(16px,2.4vw,30px));width:var(--kw);flex-direction:column;flex-wrap:nowrap;gap:2px}
+    .pj-key button{align-items:flex-start;padding:6px 0;text-align:left}
+    .pj-key button::before{flex:none;margin-top:1px}
   }
 
   /* ---------- project pages (Figma pages 6–20) ---------- */
