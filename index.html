@@ -196,6 +196,8 @@
   .pj-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px 32px;margin-bottom:clamp(16px,2.4vw,30px)}
   /* "the heading moves into place": starts big and lower-right, settles top-left */
   .pj-title{--h:min(1, calc(var(--e) * 1.6));margin:0;font-family:var(--sans);font-weight:500;font-size:var(--title);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink);transform-origin:0 100%;opacity:min(1, calc(var(--e) * 3));transform:translate(calc((1 - var(--h)) * 18vw), calc((1 - var(--h)) * 28vh)) scale(calc(1 + (1 - var(--h)) * .9))}
+  .pj-all{padding:0;letter-spacing:inherit;text-transform:inherit;text-align:left}   /* clicking the heading shows all projects again */
+  .pj-all:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
   /* typology key — the caption bar's grey shows the project type (from the Figma note) */
   .t-res{--t:#c0c0c0;--tc:var(--ink)}
   .t-oth{--t:#353839;--tc:#fff}
@@ -457,7 +459,7 @@
 <section id="projects" class="section" data-label="Projects">
   <div class="pj">
     <div class="pj-head">
-      <h2 class="pj-title">Projects</h2>
+      <h2 class="pj-title"><button type="button" class="pj-all">Projects</button></h2>
       <ul class="pj-key" aria-label="Filter projects by type">
         <li><button type="button" class="t-res" data-filter="res" aria-pressed="false">Residential</button></li>
         <li><button type="button" class="t-com" data-filter="com" aria-pressed="false">Commercial / Retail</button></li>
@@ -789,6 +791,7 @@ if (window.Lenis && !reduce) {
   lenis = new Lenis({duration:1.3, easing:t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel:true});
 }
 const scrollToEl = i => {
+  if (S[i] === projects) clearFilter();   // the "Projects" links always land on all the projects
   const y = i === 0 ? 0 : S[i].offsetTop;
   if (lenis) lenis.scrollTo(y, {duration:Math.min(3.2, 1.2 + Math.abs(y - scrollY) / innerHeight * .35), easing:easeInOut});
   else scrollTo({top:y, behavior:reduce ? 'auto' : 'smooth'});
@@ -1049,7 +1052,9 @@ show(0, true);
 const keyBtns = [...projects.querySelectorAll('.pj-key button')], pjItems = [...projects.querySelectorAll('.pj-grid > li')];
 const pjHead = projects.querySelector('.pj-head');
 function setFilter(type) {
-  const headTop = pjHead.getBoundingClientRect().top;
+  // keep what's on screen still as the grid's height changes: the heading, or whatever follows if the grid is above the view
+  const anchor = projects.getBoundingClientRect().bottom <= 0 ? work : pjHead;
+  const anchorTop = anchor.getBoundingClientRect().top;
   let n = 0;
   activePages = [];
   pjItems.forEach(li => {
@@ -1064,9 +1069,8 @@ function setFilter(type) {
   });
   keyBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.filter === type));
   if (!activePages.includes(pages[pi])) show(pages.indexOf(activePages[0]), true);
-  // the grid's height just changed: keep the heading and key exactly where they were on screen
   if (lenis) lenis.resize();
-  const dy = pjHead.getBoundingClientRect().top - headTop;
+  const dy = anchor.getBoundingClientRect().top - anchorTop;
   if (Math.abs(dy) > .5) {
     if (lenis) lenis.scrollTo(scrollY + dy, {immediate:true, force:true});
     else scrollTo(0, scrollY + dy);
@@ -1074,6 +1078,8 @@ function setFilter(type) {
   lastY = -1;
 }
 keyBtns.forEach(b => b.addEventListener('click', () => setFilter(b.getAttribute('aria-pressed') === 'true' ? 'all' : b.dataset.filter)));
+function clearFilter() { if (keyBtns.some(b => b.getAttribute('aria-pressed') === 'true')) setFilter('all'); }
+projects.querySelector('.pj-all').addEventListener('click', clearFilter);
 addEventListener('resize', () => show(pi, true));
 // tiles: jump straight to that project, then scroll down to it
 document.querySelectorAll('#projects a[href^="#"]').forEach(a => a.addEventListener('click', e => {
