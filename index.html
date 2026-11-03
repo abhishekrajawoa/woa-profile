@@ -104,9 +104,12 @@
   /* ---------- what's next: same layout and scroll animation as Meet the Founders, in full colour and never cropped ---------- */
   #next{--p:0;--pad:clamp(24px,4svh,48px);color:var(--paper);background:#000;padding-top:calc(var(--pad) + env(safe-area-inset-top));padding-bottom:calc(var(--pad) + env(safe-area-inset-bottom))}
   /* no caption here, so heading and image always fit on one screen (the heading's overhang sits in the top margin) */
-  #next .fd{margin-top:calc(var(--title) * .895);width:min(100%,calc((100svh - 2 * var(--pad) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - var(--title) * .895) * 1.7))}
-  #next .fd-photo{aspect-ratio:603/394}
-  #next .fd-photo img{filter:none}
+  #next .fd{margin-top:calc(var(--title) * .895);width:min(100%,calc((100svh - 2 * var(--pad) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - var(--title) * .895) * 1.85))}
+  /* the upcoming projects play on a loop like a GIF: stacked images, cross-faded by JS while the page is on screen */
+  #next .fd-photo{position:relative;aspect-ratio:1619/971}
+  #next .fd-photo img{position:absolute;inset:0;filter:none;opacity:0;transition:opacity .9s ease}
+  #next .fd-photo img.on{opacity:1}
+  @media (prefers-reduced-motion:reduce){#next .fd-photo img{transition:none}}
 
   /* ---------- awards & publications (Figma page 3) — two endless rows drifting in opposite directions ---------- */
   /* --p: 0→1 as the section scrolls into place; --bg: background black→paper */
@@ -754,7 +757,12 @@
   <div class="fd">
     <h2 class="fd-title"><span><span>What&rsquo;s</span></span><span><span>Next?</span></span></h2>
     <figure class="fd-photo">
-      <img src="media/next/upcoming-placeholder.jpg" alt="Upcoming Workers of Art projects" decoding="async">
+      <img class="on" src="media/next/01.jpg" alt="Upcoming Workers of Art projects" decoding="async">
+      <img src="media/next/02.jpg" alt="" loading="lazy" decoding="async">
+      <img src="media/next/03.jpg" alt="" loading="lazy" decoding="async">
+      <img src="media/next/04.jpg" alt="" loading="lazy" decoding="async">
+      <img src="media/next/05.jpg" alt="" loading="lazy" decoding="async">
+      <img src="media/next/06.jpg" alt="" loading="lazy" decoding="async">
     </figure>
   </div>
 </section>
@@ -1092,6 +1100,21 @@ track.addEventListener('pointerup', e => {
 track.addEventListener('pointercancel', () => { sw = null; });
 const ppIo = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('in', e.isIntersecting)), {threshold:.3});
 pages.forEach(pg => ppIo.observe(pg));
+
+/* ---------- what's next: the images loop while the page is on screen (a still image if motion is reduced) ---------- */
+const nextImgs = [...whatsNext.querySelectorAll('.fd-photo img')];
+let nextI = 0, nextTimer = null;
+function nextStep() {
+  const n = (nextI + 1) % nextImgs.length;
+  if (!nextImgs[n].complete || !nextImgs[n].naturalWidth) return;   // not loaded yet: try again on the next beat
+  nextImgs[nextI].classList.remove('on');
+  nextImgs[n].classList.add('on');
+  nextI = n;
+}
+new IntersectionObserver(es => {
+  clearInterval(nextTimer);
+  nextTimer = es[es.length - 1].isIntersecting && !reduce ? setInterval(nextStep, 3000) : null;
+}).observe(whatsNext);
 
 document.querySelectorAll('.section').forEach(s => s.querySelectorAll('.rv').forEach((el, i) => el.style.setProperty('--i', i)));
 const io = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('in', e.isIntersecting)), {rootMargin:'0px 0px -12% 0px'});
