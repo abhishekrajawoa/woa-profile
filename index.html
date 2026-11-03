@@ -71,29 +71,12 @@
   @media (hover:hover){
     .home-dots button:hover{transform:scale(1.25);box-shadow:0 0 0 8px rgba(245,243,239,.25)}
     .home-dots button:hover span{opacity:1;transform:translate(-50%,0)}
-    .side button:hover span{opacity:1;transform:none}
   }
   @media (hover:none){.home-dots span{opacity:1;transform:translate(-50%,0)}}
   .hint{position:absolute;bottom:calc(26px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);color:rgba(245,243,239,.8);font-size:11px;letter-spacing:.25em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:8px}
   .hint i{width:1px;height:34px;background:linear-gradient(rgba(245,243,239,0),rgba(245,243,239,.9));animation:hint 1.8s ease-in-out infinite}
   @keyframes hint{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
   .whiteout{position:absolute;inset:0;background:var(--paper);opacity:0;pointer-events:none}
-
-  /* ---------- fixed chrome (appears after the hero) ---------- */
-  .chrome{position:fixed;inset:0;pointer-events:none;z-index:10;opacity:0;transition:opacity .5s}
-  body.inner .chrome{opacity:1}
-  body.inner .chrome > *{pointer-events:auto}
-  .side{position:absolute;right:max(clamp(14px,2.2vw,32px), env(safe-area-inset-right));top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:18px}
-  .side button{display:flex;align-items:center;justify-content:flex-end;gap:12px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;color:var(--muted);transition:color .4s}
-  .side button b{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--ink);transition:background .3s,transform .3s,border-color .4s}
-  .side button span{opacity:0;transform:translateX(6px);transition:.3s}
-  .side button[aria-current="true"] span{opacity:1;transform:none}
-  .side button[aria-current="true"]{color:var(--ink)}
-  .side button[aria-current="true"] b{background:var(--ink);transform:scale(1.2)}
-  body.dark .side button{color:#8c8c8c}
-  body.dark .side button[aria-current="true"]{color:var(--paper)}
-  body.dark .side button b{border-color:var(--paper)}
-  body.dark .side button[aria-current="true"] b{background:var(--paper)}
 
   /* ---------- sections ---------- */
   .section{position:relative;min-height:100vh;min-height:100svh;padding:calc(clamp(88px,12vh,130px) + env(safe-area-inset-top)) var(--gxr) calc(clamp(48px,8vh,80px) + env(safe-area-inset-bottom)) var(--gx);display:flex;flex-direction:column;justify-content:center}
@@ -106,9 +89,8 @@
   /* ---------- meet the founders (Figma page 2) — every value below is driven by scroll ---------- */
   /* --p: 0→1 as the section scrolls into place; --bg: background paper→black */
   #founders{--p:0;color:var(--paper);background:rgb(var(--bg,245,243,239))}
-  /* starts at the page margin (same left edge as the Awards heading) and fills the width,
-     capped so the photo still fits on screen and stops short of the side navigation labels */
-  .fd{position:relative;container-type:inline-size;width:min(100% - 80px,calc((100vh - 120px) * 1.7));margin:clamp(40px,7vh,80px) 0 0}
+  /* starts at the page margin (same left edge as the Awards heading) and fills the width, capped so the photo still fits on screen */
+  .fd{position:relative;container-type:inline-size;width:min(100%,calc((100vh - 120px) * 1.7));margin:clamp(40px,7vh,80px) 0 0}
   .fd-title{position:absolute;left:0;top:-.895em;z-index:2;margin:0;font-family:var(--sans);font-weight:500;font-size:var(--title);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:#fff;transform:translateY(calc((1 - var(--p)) * -8cqw))}
   .fd-title > span{display:block;overflow:hidden;padding-bottom:.04em}
   .fd-title > span > span{display:block;transform:translateY(calc((1 - min(1, var(--p) * 1.6)) * 105%))}
@@ -283,9 +265,6 @@
     .pp-arrow.prev:hover svg{transform:translateX(-6px)}
     .pp-arrow.next:hover svg{transform:translateX(6px)}
   }
-  /* the side nav steps aside on the project pages, where the « » arrows take over */
-  .side{transition:opacity .4s}
-  body.work .chrome .side{opacity:0;pointer-events:none}
 
   /* ---------- contact (Figma page 22) ---------- */
   /* --bg: background black (project pages) → paper as it rises */
@@ -309,9 +288,8 @@
   /* ---------- iPad portrait & small tablets ---------- */
   @media (max-width:900px){
     .pj-grid{grid-template-columns:repeat(3,1fr)}
-    .side{display:none}
     .logo,.home-dots{width:80vw}
-    .fd{width:min(100%,calc((100vh - 120px) * 1.7));margin-top:12vw}   /* side navigation is hidden here */
+    .fd{margin-top:12vw}
   }
   /* ---------- iPhone portrait ---------- */
   @media (max-width:600px){
@@ -354,7 +332,6 @@
     .home-dots button{width:16px;height:16px}
     .home-dots span{top:calc(100% + 8px);font-size:9px}
     .hint{display:none}
-    .side{display:none}
     .fd{margin-top:16vh}
     .fd-cap p{text-align:left}
   }
@@ -775,11 +752,6 @@
   </div>
 </section>
 
-<!-- fixed chrome shown after the hero -->
-<div class="chrome">
-  <nav class="side" id="side" aria-label="Sections"></nav>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <script>
 document.documentElement.classList.add('js');
@@ -808,19 +780,13 @@ const scrollToEl = i => {
 };
 
 /* ---------- navigation UI ---------- */
-const homeDots = document.getElementById('homeDots'), side = document.getElementById('side');
+const homeDots = document.getElementById('homeDots');
 S.slice(1).forEach((s, i) => {
   const b = document.createElement('button');
   b.innerHTML = `<span>${s.dataset.label}</span>`;
   b.setAttribute('aria-label', s.dataset.label);
   b.onclick = () => scrollToEl(i + 1);
   homeDots.appendChild(b);
-});
-S.forEach((s, i) => {
-  const b = document.createElement('button');
-  b.innerHTML = `<span>${s.dataset.label}</span><b></b>`;
-  b.onclick = () => scrollToEl(i);
-  side.appendChild(b);
 });
 
 /* ---------- logo zoom geometry: centre + radius of the "O" as fractions of the logo (from SV_LOGO.svg) ---------- */
@@ -855,7 +821,7 @@ function setZoom(s) {
 
 /* ---------- per-frame scroll scene ---------- */
 const PAPER = [245, 243, 239];
-let lastKey = '', lastY = -1;
+let lastY = -1;
 function update() {
   const vh = innerHeight, y = scrollY;
   if (y === lastY || !G) return;   // nothing moved: skip the work (saves battery on phones)
@@ -898,19 +864,7 @@ function update() {
   work.style.setProperty('--bg', PAPER.map(c => Math.round(c * (1 - clamp((vh - rw.top) / (vh * .5))))).join(','));
   const inWork = rw.top <= vh * .5 && rw.bottom > vh * .5;
 
-  // chrome: current section + light/dark
-  let cur = 0;
-  S.forEach((s, i) => { if (s.getBoundingClientRect().top <= vh * .5) cur = i; });
-  if (y < home.offsetHeight - vh * 1.02) cur = 0;
-  const dark = inWork || S[cur].classList.contains('dark') && (cur !== 1 || bt > .5);
-  const key = cur + '|' + dark + '|' + inWork;
-  if (key !== lastKey) {
-    lastKey = key;
-    document.body.classList.toggle('inner', cur > 0);
-    document.body.classList.toggle('dark', dark);
-    document.body.classList.toggle('work', inWork);
-    [...side.children].forEach((b, i) => b.setAttribute('aria-current', i === cur));
-  }
+  document.body.classList.toggle('work', inWork);   // the ← → keys step through the projects while they're on screen
 }
 
 /* ---------- locate us: project markers ---------- */
