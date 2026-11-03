@@ -232,6 +232,29 @@
     .pj-key button::before{flex:none;margin-top:1px}
   }
 
+  /* ---------- image carousel: full screen, swipe (native scroll-snap), arrows or ← → keys ---------- */
+  .pp-row figure{cursor:zoom-in}
+  .pp-row figure:focus-visible{outline:2px solid #fff;outline-offset:2px}
+  #lb{--px:clamp(12px,7vw,96px);--py:clamp(48px,8vh,64px);position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;overflow:hidden;background:#000;color:#fff;overscroll-behavior:contain}
+  #lb::backdrop{background:#000}
+  .lb-strip{display:flex;width:100%;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior:contain;touch-action:pan-x}
+  .lb-strip::-webkit-scrollbar{display:none}
+  .lb-strip:focus{outline:none}
+  .lb-strip figure{flex:0 0 100%;height:100%;margin:0;display:grid;place-items:center;scroll-snap-align:center;scroll-snap-stop:always}
+  /* always the whole image, as large as fits; very small originals stop at twice their size so they don't turn to mush */
+  .lb-strip img{display:block;width:min(100vw - 2 * var(--px), (100dvh - 2 * var(--py)) * var(--r), var(--cap));height:auto;aspect-ratio:var(--r);background:#111}
+  .lb-head{position:absolute;z-index:2;top:calc(14px + env(safe-area-inset-top));left:max(18px, env(safe-area-inset-left));font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;line-height:20px;color:rgba(255,255,255,.8);pointer-events:none}
+  .lb-btn{position:absolute;z-index:2;display:grid;place-items:center;width:44px;height:44px;color:#fff;-webkit-tap-highlight-color:transparent}
+  .lb-btn:focus-visible{outline:2px solid #fff;outline-offset:-2px}
+  .lb-close{top:calc(2px + env(safe-area-inset-top));right:max(6px, env(safe-area-inset-right))}
+  .lb-close svg{width:20px;height:20px}
+  .lb-arrow{top:50%;translate:0 -50%}
+  .lb-arrow svg{width:clamp(24px,2.6vw,36px);height:auto}
+  .lb-prev{left:max(calc((var(--px) - 44px) / 2), env(safe-area-inset-left))}
+  .lb-prev svg{scale:-1 1}
+  .lb-next{right:max(calc((var(--px) - 44px) / 2), env(safe-area-inset-right))}
+  @media (max-width:600px){#lb{--px:0px}.lb-arrow{display:none}}   /* phones: swipe, with the image edge to edge */
+
   /* ---------- project pages (Figma pages 6–20) ---------- */
   /* --w = the content column (the Figma frame's 824px column); every size on the page scales off it.
      --side = the gutters either side, where the « » arrows sit. --sum = the photos' aspect ratios added up. */
@@ -778,6 +801,15 @@
   </div>
 </section>
 
+<!-- image carousel, opened from the photos on a project page -->
+<dialog id="lb" aria-label="Project images">
+  <div class="lb-head"><span id="lbTitle"></span> &nbsp;<span id="lbCount"></span></div>
+  <button type="button" class="lb-btn lb-close" aria-label="Close"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 2l16 16M18 2L2 18" fill="none" stroke="currentColor" stroke-width="2.5"/></svg></button>
+  <button type="button" class="lb-btn lb-arrow lb-prev" aria-label="Previous image"><svg viewBox="0 0 40 30" aria-hidden="true"><path d="M4 3l12 12L4 27M21 3l12 12-12 12" fill="none" stroke="currentColor" stroke-width="6"/></svg></button>
+  <button type="button" class="lb-btn lb-arrow lb-next" aria-label="Next image"><svg viewBox="0 0 40 30" aria-hidden="true"><path d="M4 3l12 12L4 27M21 3l12 12-12 12" fill="none" stroke="currentColor" stroke-width="6"/></svg></button>
+  <div class="lb-strip" id="lbStrip" tabindex="-1" autofocus></div>
+</dialog>
+
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <script>
 document.documentElement.classList.add('js');
@@ -1100,6 +1132,69 @@ track.addEventListener('pointerup', e => {
 track.addEventListener('pointercancel', () => { sw = null; });
 const ppIo = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('in', e.isIntersecting)), {threshold:.3});
 pages.forEach(pg => ppIo.observe(pg));
+
+/* ---------- image carousel: tap a photo on a project page; media/gallery/<project>/NN.jpg ---------- */
+// d = each gallery image's [width, height]; s = which gallery image each photo on the project page opens
+const GALLERY = {"gardens-in-the-sky":{"s":[1,6,2],"d":[[2000,914],[1334,2000],[1292,2000],[1353,2000],[1333,2000],[1333,2000],[1333,2000],[1334,2000],[1376,2000],[1333,2000],[1334,2000],[1333,2000],[1500,2000]]},"house-by-the-stream":{"s":[0],"d":[[2000,911],[1717,916],[1720,914],[1720,914],[1717,916]]},"jewel-one":{"s":[0,1],"d":[[1152,1366],[2000,1388],[2000,1125],[1920,1080],[1920,1080]]},"perched":{"s":[0,2],"d":[[2000,1330],[1333,2000],[1500,2000],[1333,2000],[1500,2000],[1333,2000],[2000,1342],[2000,1422],[1333,2000],[1333,2000],[1334,2000],[1333,2000],[1333,2000]]},"ammaveedu":{"s":[1,3,4],"d":[[2000,913],[272,377],[2000,1333],[270,377],[272,377],[1333,2000],[1333,2000],[1333,2000],[1500,2000],[2000,1333],[1333,2000],[2000,1333],[1333,2000]]},"58-willingdon":{"s":[0],"d":[[2000,913],[1536,1024],[1537,1023],[1446,1087],[1500,2000],[1500,2000],[2000,896]]},"ribbon":{"s":[0,8,1],"d":[[1920,1080],[272,377],[1333,2000],[1472,2000],[1333,2000],[1431,2000],[1333,2000],[1848,2000],[1333,2000],[1333,2000],[2000,1334]]},"booyah":{"s":[6,5],"d":[[2000,1333],[1333,2000],[2000,1333],[2000,1333],[2000,1333],[1335,2000],[568,370],[2000,1333],[1333,2000],[1333,2000]]},"house-of-recollections":{"s":[0,1,11],"d":[[1412,2000],[1412,2000],[1500,2000],[1321,2000],[1333,2000],[1333,2000],[1500,2000],[1500,2000],[1500,2000],[1333,2000],[1409,2000],[1507,2000],[1333,2000],[1334,2000],[1293,2000]]},"idukki-blonde":{"s":[3,4],"d":[[2000,918],[2000,918],[2000,918],[396,370],[421,370],[1500,2000],[2000,1500]]},"a-quiet-invitation":{"s":[3,4,9],"d":[[1333,2000],[2000,1343],[2000,1333],[267,370],[1357,2000],[2000,1333],[1333,2000],[2000,1333],[1333,2000],[267,370],[1382,2000],[2000,1466],[1333,2000]]},"lime-and-steel":{"s":[8,6],"d":[[1500,2000],[1409,2000],[1333,2000],[2000,1353],[1333,2000],[1333,2000],[1333,2000],[2000,1314],[2000,1333]]},"toasted":{"s":[1,10,9],"d":[[1333,2000],[1334,2000],[1333,2000],[1333,2000],[1476,2000],[1333,2000],[2000,1333],[2000,1333],[1333,2000],[1458,2000],[1333,2000],[1334,2000],[1333,2000],[1333,2000],[1333,2000]]},"neytt":{"s":[0,1,2],"d":[[218,370],[243,370],[349,370],[2000,1333],[2000,1768],[2000,1653],[1377,2000],[2000,1316],[1312,2000],[2000,1633]]},"woa-second-home":{"s":[0,1],"d":[[565,370],[256,370],[1333,2000],[1334,2000],[1501,2000],[2000,1331],[1333,2000],[1571,2000],[1333,2000],[1332,2000],[2000,1301]]}};
+const lb = document.getElementById('lb'), lbStrip = document.getElementById('lbStrip'), lbTitle = document.getElementById('lbTitle'), lbCount = document.getElementById('lbCount');
+let lbI = 0, lbFrom = null;
+const lbFigs = () => lbStrip.children;
+function lbSync() {
+  const n = lbFigs().length;
+  if (!n) return;
+  lbI = clamp(Math.round(lbStrip.scrollLeft / lbStrip.clientWidth), 0, n - 1);
+  lbCount.textContent = `${lbI + 1} / ${n}`;
+  [lbI - 1, lbI, lbI + 1].forEach(k => { const f = lbFigs()[k]; if (f) f.firstChild.loading = 'eager'; });   // the neighbours are ready before they're swiped to
+}
+function lbOpen(id, start, title, from) {
+  const g = GALLERY[id];
+  lbFrom = from;
+  lbTitle.textContent = title;
+  lbStrip.innerHTML = g.d.map(([w, h], k) =>
+    `<figure><img src="media/gallery/${id}/${String(k + 1).padStart(2, '0')}.jpg" alt="${title.replace(/"/g, '&quot;')}, image ${k + 1} of ${g.d.length}" width="${w}" height="${h}" loading="lazy" decoding="async" style="--r:${(w / h).toFixed(4)};--cap:${Math.max(w, h) < 1200 ? w * 2 : w}px"></figure>`).join('');
+  lb.showModal();
+  if (lenis) lenis.stop();   // the page behind stays put
+  lbStrip.scrollLeft = start * lbStrip.clientWidth;
+  lbSync();
+}
+function lbGo(d) {
+  const n = lbFigs().length, to = (lbI + d + n) % n, wrap = Math.abs(to - lbI) > 1;
+  lbStrip.scrollTo({left:to * lbStrip.clientWidth, behavior:wrap || reduce ? 'auto' : 'smooth'});
+}
+lbStrip.addEventListener('scroll', () => requestAnimationFrame(lbSync), {passive:true});
+lb.querySelector('.lb-close').addEventListener('click', () => lb.close());
+lb.querySelector('.lb-prev').addEventListener('click', () => lbGo(-1));
+lb.querySelector('.lb-next').addEventListener('click', () => lbGo(1));
+lbStrip.addEventListener('click', e => { if (e.target.tagName === 'FIGURE') lb.close(); });   // tapping beside the image closes it
+lb.addEventListener('keydown', e => {
+  e.stopPropagation();   // ← → move the images here, not the projects behind
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); lbGo(e.key === 'ArrowLeft' ? -1 : 1); }
+});
+lb.addEventListener('wheel', e => { if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) e.preventDefault(); }, {passive:false});
+lb.addEventListener('close', () => {
+  if (lenis) lenis.start();
+  lbStrip.innerHTML = '';
+  // rotating the iPad while the carousel was open can reflow the page away from the project: come back to it
+  const r = work.getBoundingClientRect();
+  if (r.bottom <= 0 || r.top >= innerHeight) {
+    if (lenis) { lenis.resize(); lenis.scrollTo(work.offsetTop, {immediate:true, force:true}); }
+    else scrollTo(0, work.offsetTop);
+  }
+  if (lbFrom) lbFrom.focus({preventScroll:true});
+});
+addEventListener('resize', () => { if (lb.open) lbStrip.scrollLeft = lbI * lbStrip.clientWidth; });
+pages.forEach(pg => {
+  if (!GALLERY[pg.id]) return;
+  const title = pg.getAttribute('aria-label');
+  pg.querySelectorAll('.pp-row figure').forEach((f, k) => {
+    const open = () => lbOpen(pg.id, GALLERY[pg.id].s[k] ?? 0, title, f);
+    f.tabIndex = 0;
+    f.setAttribute('role', 'button');
+    f.setAttribute('aria-label', `Open ${title} images`);
+    f.addEventListener('click', open);
+    f.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+});
 
 /* ---------- what's next: the images loop while the page is on screen (a still image if motion is reduced) ---------- */
 const nextImgs = [...whatsNext.querySelectorAll('.fd-photo img')];
