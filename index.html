@@ -202,9 +202,9 @@
   .t-com{--t:#696969;--tc:#fff}
   .t-prod{--t:#dcdcdc;--tc:var(--ink)}
   .pj-key{list-style:none;display:flex;flex-wrap:wrap;gap:0 20px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--muted);opacity:clamp(0, calc(var(--e) * 4 - 2.4), 1)}
-  /* the key doubles as the filter: click a type to show only those projects (see setFilter) */
+  /* the key doubles as the filter: click a type to show only those projects, click it again to show all (see setFilter) */
   .pj-key button{display:flex;align-items:center;gap:8px;padding:8px 0;font-weight:600;letter-spacing:inherit;text-transform:inherit;color:var(--muted);text-underline-offset:4px;transition:color .25s}
-  .pj-key button:not([data-filter="all"])::before{content:"";width:11px;height:11px;background:var(--t);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+  .pj-key button::before{content:"";width:11px;height:11px;background:var(--t);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
   .pj-key button[aria-pressed="true"]{color:var(--ink);text-decoration:underline}
   .pj-key button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   @media (hover:hover){.pj-key button:hover{color:var(--ink)}}
@@ -226,9 +226,6 @@
     .tile:hover .cap i{transform:rotate(90deg)}
     .pj-grid:has(.tile:hover) .tile:not(:hover) img{opacity:.45}
   }
-  .pj-next{display:flex;width:max-content;margin:clamp(18px,3vw,36px) 0 0 auto;padding:10px;color:var(--ink);opacity:clamp(0, calc((var(--e) - .85) * 8), 1)}
-  .pj-next svg{width:clamp(44px,4.4vw,64px);height:auto;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
-  @media (hover:hover){.pj-next:hover svg{transform:translateX(8px)}}
 
   /* ---------- project pages (Figma pages 6–20) ---------- */
   /* --w = the content column (the Figma frame's 824px column); every size on the page scales off it.
@@ -462,7 +459,6 @@
     <div class="pj-head">
       <h2 class="pj-title">Projects</h2>
       <ul class="pj-key" aria-label="Filter projects by type">
-        <li><button type="button" data-filter="all" aria-pressed="true">All</button></li>
         <li><button type="button" class="t-res" data-filter="res" aria-pressed="false">Residential</button></li>
         <li><button type="button" class="t-com" data-filter="com" aria-pressed="false">Commercial / Retail</button></li>
         <li><button type="button" class="t-prod" data-filter="prod" aria-pressed="false">Product</button></li>
@@ -486,9 +482,6 @@
       <li style="--i:13"><a class="tile t-com" href="#neytt"><span class="ph"><img src="media/projects/14-neytt.jpg" alt="" loading="lazy" decoding="async"></span><span class="cap"><i>+</i>Neytt</span></a></li>
       <li style="--i:14"><a class="tile t-oth" href="#woa-second-home"><span class="ph"><img src="media/projects/15-woa-second-home.jpg" alt="" loading="lazy" decoding="async"></span><span class="cap"><i>+</i>WOA Second Home</span></a></li>
     </ul>
-    <a class="pj-next" href="#gardens-in-the-sky" aria-label="Go through the projects from the start">
-      <svg viewBox="0 0 66 32" aria-hidden="true"><path d="M5 3l13 13L5 29M39 3l13 13-13 13" fill="none" stroke="currentColor" stroke-width="6.5"/></svg>
-    </a>
   </div>
 </section>
 
@@ -1030,7 +1023,7 @@ addEventListener('load', measure);
 measure();
 
 /* ---------- simple in-view reveals (replay in both directions) ---------- */
-/* ---------- project links: tiles and ">>" open a project page; « » step through them ---------- */
+/* ---------- project links: tiles open a project page; « » step through them ---------- */
 const goTo = el => {
   if (lenis) lenis.scrollTo(el.offsetTop, {duration:1.6, easing:easeInOut});
   else scrollTo({top:el.offsetTop, behavior:reduce ? 'auto' : 'smooth'});
@@ -1052,9 +1045,9 @@ function step(d) {
   else goTo(d < 0 ? projects : contact);   // past either end: back to the grid / on to the contact page
 }
 show(0, true);
-/* ---------- projects filter: the type key shows one type at a time; clicking the active type (or All) shows everything ---------- */
+/* ---------- projects filter: the type key shows one type at a time; clicking the active type again shows everything ---------- */
 const keyBtns = [...projects.querySelectorAll('.pj-key button')], pjItems = [...projects.querySelectorAll('.pj-grid > li')];
-const pjHead = projects.querySelector('.pj-head'), pjNext = projects.querySelector('.pj-next');
+const pjHead = projects.querySelector('.pj-head');
 function setFilter(type) {
   const headTop = pjHead.getBoundingClientRect().top;
   let n = 0;
@@ -1070,7 +1063,6 @@ function setFilter(type) {
     activePages.push(pages.find(pg => pg.id === a.getAttribute('href').slice(1)));
   });
   keyBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.filter === type));
-  pjNext.setAttribute('href', '#' + activePages[0].id);
   if (!activePages.includes(pages[pi])) show(pages.indexOf(activePages[0]), true);
   // the grid's height just changed: keep the heading and key exactly where they were on screen
   if (lenis) lenis.resize();
