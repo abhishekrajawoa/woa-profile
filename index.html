@@ -35,8 +35,6 @@
     --gx:max(clamp(16px,6vw,96px), calc(env(safe-area-inset-left) + 12px));
     --gxr:max(clamp(16px,6vw,96px), calc(env(safe-area-inset-right) + 12px));
     --top:calc(clamp(20px,4vh,36px) + env(safe-area-inset-top));
-    /* founders block width; the Awards heading is indented from it so both headings share a left edge */
-    --fd-w:min(78vw,calc((100vh - 300px) * 1.5),1200px);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{background:var(--paper);-webkit-text-size-adjust:100%;text-size-adjust:100%}
@@ -107,21 +105,23 @@
   /* ---------- meet the founders (Figma page 2) — every value below is driven by scroll ---------- */
   /* --p: 0→1 as the section scrolls into place; --bg: background paper→black */
   #founders{--p:0;color:var(--paper);background:rgb(var(--bg,245,243,239))}
-  .fd{position:relative;container-type:inline-size;width:var(--fd-w);margin:clamp(40px,7vh,80px) auto 0}
-  .fd-title{position:absolute;left:0;top:-6.8cqw;z-index:2;margin:0;font-family:var(--sans);font-weight:600;font-size:7.6cqw;line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:#fff;transform:translateY(calc((1 - var(--p)) * -8cqw))}
+  /* starts at the page margin (same left edge as the Awards heading) and fills the width,
+     capped so the photo still fits on screen and stops short of the side navigation labels */
+  .fd{position:relative;container-type:inline-size;width:min(100% - 80px,calc((100vh - 120px) * 1.7));margin:clamp(40px,7vh,80px) 0 0}
+  .fd-title{position:absolute;left:0;top:-.895em;z-index:2;margin:0;font-family:var(--sans);font-weight:500;font-size:clamp(38px,5.6vw,100px);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:#fff;transform:translateY(calc((1 - var(--p)) * -8cqw))}
   .fd-title > span{display:block;overflow:hidden;padding-bottom:.04em}
   .fd-title > span > span{display:block;transform:translateY(calc((1 - min(1, var(--p) * 1.6)) * 105%))}
   .fd-title > span + span > span{transform:translateY(calc((1 - min(1, max(0, var(--p) * 1.6 - .15))) * 105%))}
   .fd-photo{margin:0 0 0 10.1%;aspect-ratio:603/394;background:#3a3a3a;overflow:hidden;clip-path:inset(calc((1 - var(--p)) * 18%) calc((1 - var(--p)) * 30%) calc((1 - var(--p)) * 18%) 0)}
   .fd-photo img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(1);transform:scale(calc(1.35 - var(--p) * .35))}
   .fd-cap{margin-left:10.1%;padding-top:1.4cqw;opacity:clamp(0, calc((var(--p) - .65) * 3), 1);transform:translateY(calc((1 - var(--p)) * 40px))}
-  .fd-cap h3{font-size:max(14px,2.1cqw);font-weight:600;letter-spacing:-.01em;margin-bottom:.3em}
-  .fd-cap p{font-size:max(12px,1.62cqw);line-height:1.45;font-weight:300;text-align:justify;color:#d6d6d6}
+  .fd-cap h3{font-size:max(14px,min(2.1cqw,22px));font-weight:600;letter-spacing:-.01em;margin-bottom:.3em}
+  .fd-cap p{font-size:max(12px,min(1.62cqw,17px));line-height:1.45;font-weight:300;text-align:justify;color:#d6d6d6}
 
   /* ---------- awards & publications (Figma page 3) — two endless rows drifting in opposite directions ---------- */
   /* --p: 0→1 as the section scrolls into place; --bg: background black→paper */
   #awards{--p:0;background:rgb(var(--bg,245,243,239));overflow:hidden;gap:clamp(36px,9vh,110px)}
-  .aw-title{margin:0;padding-left:calc((100% - var(--fd-w)) / 2);font-family:var(--sans);font-weight:500;font-size:clamp(38px,5.6vw,100px);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink)}
+  .aw-title{margin:0;font-family:var(--sans);font-weight:500;font-size:clamp(38px,5.6vw,100px);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink)}
   .aw-title > span{display:block;overflow:hidden;padding-bottom:.04em}
   .aw-title > span > span{display:block;transform:translateY(calc((1 - min(1, var(--p) * 1.6)) * 105%))}
   .aw-title > span + span > span{transform:translateY(calc((1 - min(1, max(0, var(--p) * 1.6 - .15))) * 105%))}
@@ -178,6 +178,8 @@
   .map-title > span{display:block;overflow:hidden;padding-bottom:.04em}
   .map-title > span > span{display:block;transform:translateY(calc((1 - min(1, var(--e) * 1.4)) * 105%))}
   .map-title > span + span > span{transform:translateY(calc((1 - min(1, max(0, var(--e) * 1.4 - .15))) * 105%))}
+  /* wide screens: the map starts 24vw from the margin, so "OUR WORK." is sized to fit inside that space */
+  @media (orientation:landscape){.map-title{font-size:clamp(28px,4.2vw,100px)}}
   .legend{list-style:none;display:grid;gap:6px;font-size:clamp(12px,1vw,15px);font-weight:500;letter-spacing:.22em;text-transform:uppercase;opacity:clamp(0, calc(var(--e) * 3 - 2), 1)}
   .legend li{display:flex;align-items:center;gap:1.1em}
   .legend .cross{flex:none;width:10px;height:10px;filter:none}
@@ -293,8 +295,7 @@
     .pj-grid{grid-template-columns:repeat(3,1fr)}
     .side{display:none}
     .logo,.home-dots{width:80vw}
-    :root{--fd-w:100%}
-    .fd{margin-top:12vw}
+    .fd{width:min(100%,calc((100vh - 120px) * 1.7));margin-top:12vw}   /* side navigation is hidden here */
   }
   /* ---------- iPhone portrait ---------- */
   @media (max-width:600px){
@@ -339,7 +340,6 @@
     .home-dots span{top:calc(100% + 8px);font-size:9px}
     .hint{display:none}
     .side{display:none}
-    :root{--fd-w:min(56vw,540px)}
     .fd{margin-top:16vh}
     .fd-cap p{text-align:left}
   }
