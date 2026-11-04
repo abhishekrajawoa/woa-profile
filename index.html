@@ -102,14 +102,23 @@
   .fd-cap p{font-size:max(12px,min(1.62cqw,17px));line-height:1.45;font-weight:300;text-align:justify;color:#d6d6d6}
 
   /* ---------- what's next: same layout and scroll animation as Meet the Founders, in full colour and never cropped ---------- */
-  #next{--p:0;--pad:clamp(24px,4svh,48px);color:var(--paper);background:#000;padding-top:calc(var(--pad) + env(safe-area-inset-top));padding-bottom:calc(var(--pad) + env(safe-area-inset-bottom))}
-  /* no caption here, so heading and image always fit on one screen (the heading's overhang sits in the top margin) */
-  #next .fd{margin-top:calc(var(--title) * .895);width:min(100%,calc((100svh - 2 * var(--pad) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - var(--title) * .895) * 1.85))}
+  /* --g: gap above and below the image; --side: smallest gap left and right. The image is centred on the page; the heading stays at the page margin */
+  #next{--p:0;--g:max(14svh,calc(var(--title) * .895 + 16px),env(safe-area-inset-top) + var(--title) * .895,env(safe-area-inset-bottom));--side:var(--g);color:var(--ink);background:rgb(var(--bg,245,243,239));padding-top:0;padding-bottom:0}
+  @media (orientation:portrait){#next{--side:var(--gx)}}   /* tall screens: use the full width, centred top to bottom */
+  #next .fd{width:auto;margin:0 calc(-1 * var(--gxr)) 0 calc(-1 * var(--gx))}
+  #next .fd-title{left:var(--gx);z-index:auto;color:var(--ink)}
+  /* the heading overlaps the image: black on the page, white where it crosses the image (a white copy clipped to the image's edges; the black one sits behind the image) */
+  #next .fd-title.over{--h:calc(100svh - 2 * var(--g));--w:min(100cqw - 2 * var(--side),var(--h) * 1.8);z-index:2;color:#fff;clip-path:inset(.895em 0 0 calc((100cqw - var(--w)) / 2 - var(--gx)))}
   /* the upcoming projects play on a loop like a GIF: stacked images, cross-faded by JS while the page is on screen */
-  #next .fd-photo{position:relative;aspect-ratio:1619/971}
+  /* fits the space between the gaps. Cropping is capped at 1.8:1 (the images are 1.67:1), so at most about 4% goes from the top and from the bottom */
+  #next .fd-photo{--h:calc(100svh - 2 * var(--g));--w:min(100cqw - 2 * var(--side),var(--h) * 1.8);position:relative;container-type:inline-size;margin:0 auto;width:var(--w);height:min(var(--h),var(--w) * 971 / 1619);aspect-ratio:auto}
   #next .fd-photo img{position:absolute;inset:0;filter:none;opacity:0;transition:opacity .9s ease}
   #next .fd-photo img.on{opacity:1}
-  @media (prefers-reduced-motion:reduce){#next .fd-photo img{transition:none}}
+  /* the type of project sits in the image's bottom-right corner and cross-fades with it */
+  .next-type{position:absolute;right:max(10px,1.8cqw);bottom:max(9px,1.45cqw);z-index:1;margin:0;font-size:max(14px,4cqw);line-height:1;color:#fff}
+  .next-type span{position:absolute;right:0;bottom:0;white-space:nowrap;opacity:0;transition:opacity .9s ease}
+  .next-type span.on{opacity:1}
+  @media (prefers-reduced-motion:reduce){#next .fd-photo img,.next-type span{transition:none}}
 
   /* ---------- awards & publications (Figma page 3) — two endless rows drifting in opposite directions ---------- */
   /* --p: 0→1 as the section scrolls into place; --bg: background black→paper */
@@ -314,17 +323,17 @@
 
   /* ---------- contact (Figma page 22) ---------- */
   /* --bg: background black (project pages) → paper as it rises */
-  #contact{min-height:100vh;min-height:100lvh;background:rgb(var(--bg,245,243,239));align-items:center;text-align:center}   /* last page: always fills the screen */
+  #contact{min-height:100vh;min-height:100lvh;background:rgb(var(--bg,0,0,0));color:var(--paper);align-items:center;text-align:center}   /* last page: always fills the screen */
   .ct{display:flex;flex-direction:column;align-items:center}
   .ct-logo{display:block;width:clamp(110px,13vw,180px);height:auto;margin-bottom:clamp(22px,4vh,40px)}
-  .ct-logo path{fill:var(--ink)}
-  .ct a{color:var(--ink);text-decoration:none;-webkit-tap-highlight-color:transparent}
+  .ct-logo path{fill:var(--paper)}
+  .ct a{color:var(--paper);text-decoration:none;-webkit-tap-highlight-color:transparent}
   .ct-handle{font-size:clamp(11px,.95vw,14px);font-weight:500;letter-spacing:.04em;text-transform:uppercase}
-  .ct-qr{display:block;width:min(36vh,62vw,320px);margin:clamp(10px,1.6vh,16px) 0;mix-blend-mode:multiply}   /* the QR's white melts into the paper */
+  .ct-qr{display:block;width:min(36vh,62vw,320px);margin:clamp(10px,1.6vh,16px) 0}   /* white on a transparent background */
   .ct-qr img{display:block;width:100%;height:auto}
-  .ct-or{font-size:clamp(11px,.95vw,14px);color:var(--muted)}
+  .ct-or{font-size:clamp(11px,.95vw,14px);color:#a8a59f}
   .ct-mail{font-size:clamp(12px,1.05vw,15px);margin-top:2px}
-  .ct a:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+  .ct a:focus-visible{outline:2px solid var(--paper);outline-offset:4px}
   @media (hover:hover){
     .ct-handle:hover,.ct-mail:hover{text-decoration:underline;text-underline-offset:3px}
     .ct-qr img{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
@@ -406,11 +415,12 @@
       </video>
       <div class="shade"></div>
     </div>
-    <svg class="zoomsvg" id="zoomSvg" aria-hidden="true"><path id="zpath" fill="#f5f3ef"/></svg>
+    <svg class="zoomsvg" id="zoomSvg" aria-hidden="true"><path id="zpath" fill="#f5f3ef"/><path id="zword" fill="#f5f3ef"/></svg>
     <div class="home-ui">
       <div class="zoomer" id="zoomer">
-        <svg class="logo" id="logo" viewBox="98.5 329.92 1604 541" role="img" aria-label="Workers of Art">
+        <svg class="logo" id="logo" viewBox="98.5 329.92 1604 623" role="img" aria-label="Workers of Art">
           <path fill="#f5f3ef" d="M98.5,329.92v538.5c0,2.19,12.15,1.62,14.54,1.54,50.42-1.62,99.91-18.15,140.77-47.23,57.5-40.91,96.52-106.24,104.19-176.82,4,26.16,10.43,51.56,21.32,75.69,39.71,87.88,127.88,145.7,224.64,148.36l573.9-.18,1.2-.8.45-296.55c9.51-143.7,136.19-248.07,280.18-224.2,107.52,17.83,190.31,107.9,200.8,216.2l-.04,302.04c-.22,1.03.72,3.45,1.55,3.45h40.5V329.92H98.5ZM972.26,836.18c-199.44,63.2-376.82-137.51-301.51-329.51,63.66-162.29,270.87-210.03,397.12-87.13,133.42,129.86,82.24,360.29-95.61,416.64Z"/>
+          <path fill="#f5f3ef" d="M117.95 952.3 101.1 902.35H106.56L122.32 949.34H119.6L135.87 902.35H140.77L156.81 949.34H154.19L170.12 902.35H175.18L158.34 952.3H152.83L137.49 907.73H138.91L123.5 952.3ZM228.34 952.76Q222.7 952.76 217.89 950.85Q213.09 948.93 209.55 945.49Q206.01 942.04 204.04 937.43Q202.07 932.81 202.07 927.33Q202.07 921.84 204.04 917.23Q206.01 912.61 209.55 909.16Q213.1 905.71 217.89 903.8Q222.68 901.9 228.34 901.9Q233.99 901.9 238.77 903.8Q243.55 905.69 247.09 909.13Q250.62 912.57 252.59 917.2Q254.56 921.83 254.56 927.33Q254.56 932.83 252.59 937.46Q250.62 942.09 247.09 945.52Q243.55 948.96 238.77 950.86Q233.99 952.76 228.34 952.76ZM228.34 948.05Q232.83 948.05 236.65 946.5Q240.47 944.95 243.3 942.14Q246.14 939.32 247.71 935.56Q249.29 931.79 249.29 927.32Q249.29 922.84 247.72 919.09Q246.14 915.34 243.31 912.52Q240.47 909.71 236.65 908.16Q232.83 906.61 228.34 906.61Q223.85 906.61 220.01 908.16Q216.18 909.71 213.34 912.53Q210.49 915.35 208.92 919.1Q207.34 922.85 207.34 927.31Q207.34 931.78 208.92 935.54Q210.49 939.3 213.33 942.13Q216.17 944.96 220.01 946.5Q223.85 948.05 228.34 948.05ZM288.53 952.3V902.35H307.17Q313.55 902.35 318.12 904.4Q322.69 906.44 325.15 910.26Q327.6 914.08 327.6 919.45Q327.6 924.75 325.15 928.57Q322.69 932.38 318.12 934.43Q313.55 936.47 307.17 936.47H291.41L293.75 934.05V952.3ZM322.61 952.3 309.76 934.18H315.5L328.4 952.3ZM293.75 934.47 291.41 931.96H307.08Q314.56 931.96 318.45 928.67Q322.34 925.37 322.34 919.45Q322.34 913.46 318.45 910.2Q314.56 906.95 307.08 906.95H291.41L293.75 904.39ZM366.81 939.92 366.57 933.47 396.79 902.35H402.88L380.8 925.44L377.84 928.65ZM362.23 952.3V902.35H367.46V952.3ZM398.11 952.3 376.57 927.46 380.11 923.62 404.36 952.3ZM439.79 924.68H466.19V929.19H439.79ZM440.31 947.71H470.35V952.3H435.08V902.35H469.32V906.95H440.31ZM504.93 952.3V902.35H523.58Q529.96 902.35 534.53 904.4Q539.1 906.44 541.55 910.26Q544.01 914.08 544.01 919.45Q544.01 924.75 541.55 928.57Q539.1 932.38 534.53 934.43Q529.96 936.47 523.58 936.47H507.82L510.16 934.05V952.3ZM539.02 952.3 526.16 934.18H531.91L544.8 952.3ZM510.16 934.47 507.82 931.96H523.48Q530.96 931.96 534.85 928.67Q538.74 925.37 538.74 919.45Q538.74 913.46 534.85 910.2Q530.96 906.95 523.48 906.95H507.82L510.16 904.39ZM592.41 952.76Q586.79 952.76 581.71 950.92Q576.63 949.08 573.81 946.22L575.9 942.18Q578.58 944.76 583.02 946.5Q587.46 948.25 592.38 948.25Q597.08 948.25 600.03 947.07Q602.99 945.9 604.4 943.89Q605.82 941.88 605.82 939.42Q605.82 936.5 604.14 934.73Q602.47 932.96 599.74 931.91Q597.01 930.86 593.73 930.1Q590.46 929.34 587.17 928.43Q583.88 927.51 581.15 926.04Q578.42 924.57 576.75 922.08Q575.08 919.59 575.08 915.63Q575.08 911.94 577.03 908.83Q578.98 905.71 583.03 903.8Q587.09 901.9 593.43 901.9Q597.67 901.9 601.82 903.09Q605.97 904.27 608.96 906.38L607.13 910.56Q603.97 908.43 600.37 907.42Q596.77 906.41 593.42 906.41Q588.9 906.41 585.96 907.64Q583.02 908.87 581.64 910.9Q580.26 912.92 580.26 915.46Q580.26 918.41 581.93 920.18Q583.61 921.95 586.34 922.98Q589.07 924.01 592.36 924.79Q595.65 925.57 598.92 926.48Q602.19 927.39 604.93 928.84Q607.66 930.29 609.33 932.75Q611 935.2 611 939.1Q611 942.74 609.02 945.86Q607.03 948.98 602.91 950.87Q598.78 952.76 592.41 952.76ZM762.29 952.76Q756.65 952.76 751.84 950.85Q747.04 948.93 743.5 945.49Q739.96 942.04 737.99 937.43Q736.02 932.81 736.02 927.33Q736.02 921.84 737.99 917.23Q739.96 912.61 743.5 909.16Q747.05 905.71 751.84 903.8Q756.63 901.9 762.29 901.9Q767.94 901.9 772.72 903.8Q777.5 905.69 781.04 909.13Q784.57 912.57 786.54 917.2Q788.51 921.83 788.51 927.33Q788.51 932.83 786.54 937.46Q784.57 942.09 781.04 945.52Q777.5 948.96 772.72 950.86Q767.94 952.76 762.29 952.76ZM762.29 948.05Q766.78 948.05 770.6 946.5Q774.42 944.95 777.25 942.14Q780.09 939.32 781.66 935.56Q783.24 931.79 783.24 927.32Q783.24 922.84 781.67 919.09Q780.09 915.34 777.26 912.52Q774.42 909.71 770.6 908.16Q766.78 906.61 762.29 906.61Q757.8 906.61 753.96 908.16Q750.13 909.71 747.29 912.53Q744.44 915.35 742.87 919.1Q741.29 922.85 741.29 927.31Q741.29 931.78 742.87 935.54Q744.44 939.3 747.28 942.13Q750.12 944.96 753.96 946.5Q757.8 948.05 762.29 948.05ZM827.15 926.51H853.59V931.1H827.15ZM827.7 952.3H822.48V902.35H856.72V906.95H827.7ZM990.27 952.3 1013.09 902.35H1018.28L1041.14 952.3H1035.58L1014.58 905.4H1016.75L995.75 952.3ZM999.24 938.98 1000.8 934.68H1029.85L1031.46 938.98ZM1071.54 952.3V902.35H1090.19Q1096.57 902.35 1101.14 904.4Q1105.71 906.44 1108.16 910.26Q1110.62 914.08 1110.62 919.45Q1110.62 924.75 1108.16 928.57Q1105.71 932.38 1101.14 934.43Q1096.57 936.47 1090.19 936.47H1074.43L1076.77 934.05V952.3ZM1105.63 952.3 1092.77 934.18H1098.52L1111.41 952.3ZM1076.77 934.47 1074.43 931.96H1090.09Q1097.57 931.96 1101.46 928.67Q1105.35 925.37 1105.35 919.45Q1105.35 913.46 1101.46 910.2Q1097.57 906.95 1090.09 906.95H1074.43L1076.77 904.39ZM1154.24 952.3V906.95H1136.66V902.35H1177.05V906.95H1159.47V952.3Z"/>
         </svg>
         <nav class="home-dots" id="homeDots" aria-label="Sections"></nav>
       </div>
@@ -792,9 +802,10 @@
 </div>
 
 <!-- WHAT'S NEXT: upcoming projects, just before the contact page -->
-<section id="next" class="section dark" data-label="What's next">
+<section id="next" class="section" data-label="What's next">
   <div class="fd">
     <h2 class="fd-title"><span><span>What&rsquo;s</span></span><span><span>Next?</span></span></h2>
+    <div class="fd-title over" aria-hidden="true"><span><span>What&rsquo;s</span></span><span><span>Next?</span></span></div>
     <figure class="fd-photo">
       <img class="on" src="media/next/01.jpg" alt="Upcoming Workers of Art projects" decoding="async">
       <img src="media/next/02.jpg" alt="" loading="lazy" decoding="async">
@@ -802,16 +813,17 @@
       <img src="media/next/04.jpg" alt="" loading="lazy" decoding="async">
       <img src="media/next/05.jpg" alt="" loading="lazy" decoding="async">
       <img src="media/next/06.jpg" alt="" loading="lazy" decoding="async">
+      <figcaption class="next-type"><span class="on">Commercial</span><span>Retail</span><span>School</span><span>Mall</span><span>Adaptive reuse</span><span>Office</span></figcaption>
     </figure>
   </div>
 </section>
 
 <!-- 21 — CONTACT (Figma page 22): logo, Instagram handle + QR (scans to the Instagram profile), email -->
-<section id="contact" class="section" data-label="Contact">
+<section id="contact" class="section dark" data-label="Contact">
   <div class="ct">
     <svg class="ct-logo rv" id="ctLogo" viewBox="98.5 329.92 1604 541" role="img" aria-label="Workers of Art"><path/></svg>
     <a class="ct-handle rv" href="https://www.instagram.com/workersofartofficial" target="_blank" rel="noopener">@workersofartofficial</a>
-    <a class="ct-qr rv" href="https://www.instagram.com/workersofartofficial" target="_blank" rel="noopener" aria-label="Workers of Art on Instagram"><img src="media/contact/instagram-qr.jpg" alt="QR code for @workersofartofficial on Instagram" width="720" height="720" loading="lazy"></a>
+    <a class="ct-qr rv" href="https://www.instagram.com/workersofartofficial" target="_blank" rel="noopener" aria-label="Workers of Art on Instagram"><img src="media/contact/instagram-qr-white.png" alt="QR code for @workersofartofficial on Instagram" width="720" height="720" loading="lazy"></a>
     <span class="ct-or rv">or</span>
     <a class="ct-mail rv" href="mailto:hello@workersofart.com">hello@workersofart.com</a>
   </div>
@@ -834,8 +846,10 @@ const S = [...document.querySelectorAll('#home, .section')];
 const home = S[0], founders = document.getElementById('founders'), awards = document.getElementById('awards'), locate = document.getElementById('locate'), projects = document.getElementById('projects');
 const work = document.getElementById('work'), whatsNext = document.getElementById('next'), contact = document.getElementById('contact');
 const logo = document.getElementById('logo'), zoomer = document.getElementById('zoomer');
-const stage = home.querySelector('.stage'), zoomSvg = document.getElementById('zoomSvg'), zpath = document.getElementById('zpath');
-zpath.setAttribute('d', logo.querySelector('path').getAttribute('d'));
+const stage = home.querySelector('.stage'), zoomSvg = document.getElementById('zoomSvg'), zpath = document.getElementById('zpath'), zword = document.getElementById('zword');
+const [logoMark, logoWord] = logo.querySelectorAll('path');
+zpath.setAttribute('d', logoMark.getAttribute('d'));
+zword.setAttribute('d', logoWord.getAttribute('d'));   // "WORKERS OF ART", outlined from SV_LOGO.svg
 document.querySelector('#ctLogo path').setAttribute('d', zpath.getAttribute('d'));   // contact page: same official logo
 const whiteout = document.getElementById('whiteout'), hint = document.getElementById('hint');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -865,7 +879,7 @@ S.slice(1).forEach((s, i) => {
 });
 
 /* ---------- logo zoom geometry: centre + radius of the "O" as fractions of the logo (from SV_LOGO.svg) ---------- */
-const O = {x:.4985, y:.4977, r:245 / 1604};
+const O = {x:.4985, y:269.26 / 623, r:245 / 1604};
 const VB = {x:98.5, y:329.92, w:1604};          // logo viewBox origin / width
 let zoomMax = 30, G = null, measuredW = 0, measuredH = 0;
 /* The hidden .logo keeps the layout; the visible logo is the path in #zoomSvg, scaled with an SVG
@@ -890,7 +904,9 @@ function measure() {
 function setZoom(s) {
   const a = s * G.k;
   const e = G.cx + s * (G.lx - VB.x * G.k - G.cx), f = G.cy + s * (G.ly - VB.y * G.k - G.cy);
-  zpath.setAttribute('transform', `matrix(${a} 0 0 ${a} ${e} ${f})`);
+  const m = `matrix(${a} 0 0 ${a} ${e} ${f})`;
+  zpath.setAttribute('transform', m);
+  zword.setAttribute('transform', m);
   zoomer.style.transform = `scale(${s})`;   // the dots ride along
 }
 
@@ -934,9 +950,10 @@ function update() {
   projects.style.setProperty('--bg', PAPER.map(c => Math.round(c * clamp((vh - rp.top) / (vh * .5)))).join(','));
   projects.style.setProperty('--e', clamp((vh - rp.top) / (vh * .85)).toFixed(4));
 
-  // project pages: background paper→black as the first one rises; contact: black→paper
-  const rw = work.getBoundingClientRect(), rc = contact.getBoundingClientRect();
-  contact.style.setProperty('--bg', PAPER.map(c => Math.round(c * clamp((vh - rc.top) / (vh * .5)))).join(','));
+  // project pages: background paper→black as the first one rises; what's next: black→paper; contact: paper→black
+  const rw = work.getBoundingClientRect(), rn = whatsNext.getBoundingClientRect(), rc = contact.getBoundingClientRect();
+  whatsNext.style.setProperty('--bg', PAPER.map(c => Math.round(c * clamp((vh - rn.top) / (vh * .5)))).join(','));
+  contact.style.setProperty('--bg', PAPER.map(c => Math.round(c * (1 - clamp((vh - rc.top) / (vh * .5))))).join(','));
   work.style.setProperty('--bg', PAPER.map(c => Math.round(c * (1 - clamp((vh - rw.top) / (vh * .5))))).join(','));
   const inWork = rw.top <= vh * .5 && rw.bottom > vh * .5;
 
@@ -1215,12 +1232,15 @@ pages.forEach(pg => {
 
 /* ---------- what's next: the images loop while the page is on screen (a still image if motion is reduced) ---------- */
 const nextImgs = [...whatsNext.querySelectorAll('.fd-photo img')];
+const nextTypes = [...whatsNext.querySelectorAll('.next-type span')];   // one label per image, in the same order
 let nextI = 0, nextTimer = null;
 function nextStep() {
   const n = (nextI + 1) % nextImgs.length;
   if (!nextImgs[n].complete || !nextImgs[n].naturalWidth) return;   // not loaded yet: try again on the next beat
   nextImgs[nextI].classList.remove('on');
   nextImgs[n].classList.add('on');
+  nextTypes[nextI].classList.remove('on');
+  nextTypes[n].classList.add('on');
   nextI = n;
 }
 new IntersectionObserver(es => {
