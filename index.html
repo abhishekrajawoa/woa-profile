@@ -21,7 +21,7 @@
 <link rel="preload" as="image" href="media/opening-poster.jpg" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Playfair+Display:wght@400&display=swap" rel="stylesheet">
 <style>
   :root{
     --paper:#f5f3ef;
@@ -128,7 +128,19 @@
 
   /* ---------- awards & publications (Figma page 3) — two endless rows drifting in opposite directions ---------- */
   /* --p: 0→1 as the section scrolls into place; --bg: background black→paper */
-  #awards{--p:0;background:rgb(var(--bg,245,243,239));overflow:hidden;gap:clamp(36px,9vh,110px)}
+  #awards{--p:0;--awgap:clamp(36px,9vh,110px);background:rgb(var(--bg,245,243,239));overflow:hidden;gap:var(--awgap)}
+  /* AD100 award, top right: hangs from the title block without moving it, centred about 80% across the page */
+  .aw-head{position:relative}
+  .aw-ad{--h:min(var(--title) * 3.1,31vh);position:absolute;right:calc(20vw - var(--gxr) - var(--h) * 184 / 846 / 2);bottom:calc(var(--awgap) * -.5);margin:0;text-align:center}
+  .aw-ad img{position:relative;z-index:1;display:block;height:var(--h);width:auto;margin:0 auto;opacity:clamp(0, calc(var(--p) * 1.6 - .3), 1)}
+  .aw-ad figcaption{position:absolute;left:50%;top:100%;transform:translateX(-50%);padding-top:.25em;white-space:nowrap;font-family:"Playfair Display",var(--serif);font-size:max(13px,calc(var(--title) * .3));line-height:1.1;color:var(--ink);opacity:clamp(0, calc(var(--p) * 1.6 - .3), 1)}
+  /* the caption orbits the award, which sits at the ring's centre: the back half passes behind it, the front half in front. Letters are flat and never stretched: JS moves them along an ellipse, changing only their size and strength with depth. Everything scales with --h */
+  .aw-ad.orbiting figcaption{opacity:0}
+  .aw-orbit{position:absolute;left:50%;top:calc(var(--h) * .5);width:0;height:0;pointer-events:none;opacity:clamp(0, calc(var(--p) * 1.6 - .3), 1)}
+  .aw-orbit span{position:absolute;left:0;top:0;white-space:pre;font:400 max(10px,calc(var(--h) * .095))/1 "Playfair Display",var(--serif);color:var(--ink)}
+  /* a white copy of the front letters, masked to the award's shape: near-black letters would vanish against the dark stone */
+  .aw-over{position:absolute;z-index:3;left:0;top:0;width:100%;height:var(--h);pointer-events:none;-webkit-mask:url(media/awards/ad100-trophy.png) center/100% 100% no-repeat;mask:url(media/awards/ad100-trophy.png) center/100% 100% no-repeat}
+  .aw-over span{color:var(--paper)}
   .aw-title{margin:0;font-family:var(--sans);font-weight:500;font-size:var(--title);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink)}
   .aw-title > span{display:block;overflow:hidden;padding-bottom:.04em}
   .aw-title > span > span{display:block;transform:translateY(calc((1 - min(1, var(--p) * 1.6)) * 105%))}
@@ -383,6 +395,7 @@
     .home-dots span{width:14vw;font-size:9px;line-height:1.3;letter-spacing:.08em;text-align:center;white-space:normal}   /* six labels: longer ones wrap instead of colliding */
     h2{font-size:clamp(40px,12vw,64px)}
     .fd{margin-top:22vw}
+    .aw-ad{--h:min(118px,15vh);right:calc(var(--h) * .3);bottom:calc(100% + 28px)}   /* no room beside the title: top right, above it */
     #founders{--fr:.94}
     .fd-photo{margin-left:6%;aspect-ratio:4/5}          /* portrait crop keeps both founders large */
     .fd-photo img{object-position:50% 50%}
@@ -451,7 +464,10 @@
 
 <!-- 3 — AWARDS & PUBLICATIONS (Figma page 3) -->
 <section id="awards" class="section" data-label="Awards">
-  <h2 class="aw-title"><span><span>Awards<small>&amp;</small></span></span><span><span>Publications</span></span></h2>
+  <div class="aw-head">
+    <h2 class="aw-title"><span><span>Awards<small>&amp;</small></span></span><span><span>Publications</span></span></h2>
+    <figure class="aw-ad"><img src="media/awards/ad100-trophy.png" alt="The AD100 2026 award" width="184" height="846"><figcaption>AD 100 . 2026</figcaption></figure>
+  </div>
   <div class="aw-rows">
     <div class="marquee m-awards" data-dir="1" role="group" aria-label="Awards">
       <div class="track">
@@ -463,7 +479,6 @@
         <img src="media/awards/woa-x-good-homes.jpg" alt="GoodHomes Awards 2024 trophy">
         <img src="media/awards/woa-x-foaid-001.jpg" alt="FOAID Architecture + Ideas award">
         <img src="media/awards/woa-x-essentia.jpg" alt="Essentia award">
-        <img src="media/awards/woa-x-ad100.jpg" alt="AD100 award">
         <img src="media/awards/shortlisted-dezeen-awards-2023.jpg" alt="Shortlisted, Dezeen Awards 2023">
         <img src="media/awards/woa-x-trends-02.jpg" alt="Trends award">
       </div>
@@ -1262,6 +1277,78 @@ pages.forEach(pg => {
   });
 });
 
+/* ---------- awards: "AD 100 . 2026 ." circles the award on a tilted ring, behind it at the back and in front at the front. Letters keep their shape: they are placed
+   by distance along the ellipse, so they stay evenly spaced and don't pile up at its ends. Only runs while on screen ---------- */
+if (!reduce) {
+  const adFig = document.querySelector('.aw-ad'), adImg = adFig.querySelector('img');
+  const buildOrbit = () => {
+    const TILT = .41, LEAN = -10 * Math.PI / 180, TURN = 8000;   // ring depth (height / width), its slope, ms per turn
+    const cosL = Math.cos(LEAN), sinL = Math.sin(LEAN);
+    // the ellipse measured out: path[k] is the angle at k/N of the way round
+    const N = 720, path = [0];
+    let walked = [0], prevX = 0, prevY = TILT;
+    for (let k = 1; k <= 2880; k++) {
+      const t = k / 2880 * 2 * Math.PI, x = Math.sin(t), y = TILT * Math.cos(t);
+      walked.push(walked[k - 1] + Math.hypot(x - prevX, y - prevY));
+      prevX = x; prevY = y;
+    }
+    for (let k = 1, j = 0; k <= N; k++) {
+      const goal = k / N * walked[2880];
+      while (walked[j] < goal && j < 2880) j++;
+      path.push(j / 2880 * 2 * Math.PI);
+    }
+    // letters, spaced by their real widths plus even tracking
+    const ctx = document.createElement('canvas').getContext('2d');
+    ctx.font = '400 100px "Playfair Display", Georgia, serif';
+    const chars = [...'AD 100 . 2026 . '.repeat(2)], widths = chars.map(c => ctx.measureText(c).width + 40);
+    const total = widths.reduce((a, b) => a + b);
+    let at = 0;
+    const spots = [];
+    const ring = document.createElement('div'), over = document.createElement('div'), overRing = document.createElement('div');
+    ring.className = overRing.className = 'aw-orbit';
+    over.className = 'aw-over';
+    ring.setAttribute('aria-hidden', 'true');
+    over.setAttribute('aria-hidden', 'true');
+    over.append(overRing);
+    chars.forEach((c, i) => {
+      if (c !== ' ') {
+        const s = document.createElement('span');
+        s.textContent = c;
+        ring.append(s);
+        const w = s.cloneNode(true);
+        overRing.append(w);
+        spots.push({s, w, u: (at + widths[i] / 2) / total, front: null});
+      }
+      at += widths[i];
+    });
+    adFig.append(ring, over);
+    adFig.classList.add('orbiting');
+    let R = 0, raf = 0;
+    new ResizeObserver(() => { R = adImg.offsetHeight * .6; }).observe(adImg);
+    const draw = now => {
+      const spin = now / TURN;
+      for (const spot of spots) {
+        const {s, w, u} = spot, t = path[Math.floor((((u - spin) % 1 + 1) % 1) * N)], depth = Math.cos(t), front = depth > 0;
+        const x = R * Math.sin(t), y = R * TILT * depth;
+        s.style.transform = `translate(${(x * cosL - y * sinL).toFixed(2)}px,${(x * sinL + y * cosL).toFixed(2)}px) rotate(-10deg) scale(${(1 + depth * .14).toFixed(3)}) translate(-50%,-50%)`;
+        s.style.opacity = (.72 + depth * .28).toFixed(3);
+        if (front) w.style.transform = s.style.transform;
+        if (front !== spot.front) {   // the award's z-index is 1
+          spot.front = front;
+          s.style.zIndex = front ? 2 : 0;
+          w.style.visibility = front ? 'visible' : 'hidden';
+        }
+      }
+      raf = requestAnimationFrame(draw);
+    };
+    new IntersectionObserver(es => {
+      cancelAnimationFrame(raf);
+      if (es[es.length - 1].isIntersecting) raf = requestAnimationFrame(draw);
+    }).observe(adFig);
+  };
+  document.fonts.load('400 100px "Playfair Display"').then(buildOrbit, buildOrbit);
+}
+
 /* ---------- what's next: the images loop while the page is on screen (a still image if motion is reduced) ---------- */
 const nextImgs = [...whatsNext.querySelectorAll('.fd-photo img')];
 const nextTypes = [...whatsNext.querySelectorAll('.next-type span')];   // one label per image, in the same order
@@ -1277,7 +1364,7 @@ function nextStep() {
 }
 new IntersectionObserver(es => {
   clearInterval(nextTimer);
-  nextTimer = es[es.length - 1].isIntersecting && !reduce ? setInterval(nextStep, 3000) : null;
+  nextTimer = es[es.length - 1].isIntersecting && !reduce ? setInterval(nextStep, 2000) : null;
 }).observe(whatsNext);
 
 document.querySelectorAll('.section').forEach(s => s.querySelectorAll('.rv').forEach((el, i) => el.style.setProperty('--i', i)));
