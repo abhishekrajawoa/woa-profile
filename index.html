@@ -165,7 +165,7 @@
   /* ---------- locate us / project map (Figma page 4) ---------- */
   /* sticky stage: the title + legend stay on screen for the whole section while the markers appear with scroll.
      --e: 0→1 as the section enters; --bg: background paper→black (same black as Meet the Founders) */
-  #locate{--e:0;display:block;padding:0;height:200vh;height:200lvh;background:rgb(var(--bg,245,243,239));color:var(--paper)}
+  #locate{--e:0;display:block;padding:0;height:100vh;height:100lvh;background:rgb(var(--bg,245,243,239));color:var(--paper)}
   .map-stage{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden}
   /* the whole of India (Delhi in the north), as large as fits; --mh = map height, .9867 = map width/height.
      Wide screens: centred, nudged right if needed to clear the title. */
@@ -887,6 +887,41 @@ const scrollToEl = i => {
   if (lenis) lenis.scrollTo(y, {duration:Math.min(3.2, 1.2 + Math.abs(y - scrollY) / innerHeight * .35), easing:easeInOut});
   else scrollTo({top:y, behavior:reduce ? 'auto' : 'smooth'});
 };
+
+/* ---------- settle: when scrolling stops with two pages part-way on screen, one eases into place: the next page in the scroll direction once 20% of the way there, otherwise back to the one you came from.
+   The hero is left alone (its zoom is scrubbed by scroll), and so is the inside of a page taller than the screen, so it can be read at any point ---------- */
+if (!reduce) {
+  let settleTimer = 0, touching = false, lastY = scrollY, down = true;
+  const settle = () => {
+    if (touching || lb.open) return;
+    const y = scrollY, vh = innerHeight;
+    if (y < home.offsetHeight - stage.offsetHeight - 1) return;
+    const points = [];
+    for (const page of [founders, awards, locate, projects, work, whatsNext, contact]) {
+      const top = page.getBoundingClientRect().top + y, height = page.offsetHeight;
+      if (height > vh + 1) {
+        if (y >= top - 1 && y <= top + height - vh + 1) return;   // inside a tall page
+        points.push(top, top + height - vh);
+      } else points.push(top);
+    }
+    const max = document.documentElement.scrollHeight - vh;
+    const above = Math.max(...points.filter(p => p <= y)), below = Math.min(max, ...points.filter(p => p > y));
+    if (!isFinite(above)) return;
+    const moved = down ? y - above : below - y;
+    const to = moved / (below - above) > .2 ? (down ? below : above) : (down ? above : below);
+    if (Math.abs(to - y) < 1) return;
+    if (lenis) lenis.scrollTo(to, {duration:.8, easing:easeInOut});
+    else scrollTo({top:to, behavior:'smooth'});
+  };
+  const settleSoon = () => { clearTimeout(settleTimer); settleTimer = setTimeout(settle, 180); };
+  addEventListener('scroll', () => {
+    if (scrollY !== lastY) down = scrollY > lastY;
+    lastY = scrollY;
+    settleSoon();
+  }, {passive:true});
+  addEventListener('touchstart', () => { touching = true; }, {passive:true});
+  ['touchend', 'touchcancel'].forEach(e => addEventListener(e, () => { touching = false; settleSoon(); }, {passive:true}));
+}
 
 /* ---------- navigation UI ---------- */
 const homeDots = document.getElementById('homeDots');
